@@ -36,6 +36,7 @@ namespace Ticket_Management_System.Services
                         SupportAgentName = t.SupportAgent.Name,
                     }).ToList(),
                 }).ToListAsync();
+
             return supportAgents;
         }
 
