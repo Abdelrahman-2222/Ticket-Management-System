@@ -1,4 +1,4 @@
-﻿namespace Ticket_Management_System.AppConfiguration
+﻿namespace Ticket_Management_System.AppAnnotation
 {
     public static class AnnotationSettings
     {

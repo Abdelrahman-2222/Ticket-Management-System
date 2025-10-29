@@ -1,7 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
+using Ticket_Management_System.Models;
+using Ticket_Management_System.Services;
 
 namespace Ticket_Management_System
 {
@@ -15,7 +18,6 @@ namespace Ticket_Management_System
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -26,6 +28,18 @@ namespace Ticket_Management_System
 
             builder.Services.AddDbContext<TicketContext>(opt => opt.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<ISupportAgentService, SupportAgentService>();
+            builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
+            builder.Services.AddScoped<ITicketCommandsService, TicketCommandsService>();
+            builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
+            builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+            builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+
+
 
             var app = builder.Build();
 
