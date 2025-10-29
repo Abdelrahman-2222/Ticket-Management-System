@@ -37,7 +37,7 @@ namespace Ticket_Management_System.Models
         /// <summary>
         /// Gets or sets the timestamp when the ticket was submitted.
         /// </summary>
-        public DateTimeOffset SubmittedAt { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset? SubmittedAt { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
         /// Gets or sets the timestamp when the ticket was resolved.

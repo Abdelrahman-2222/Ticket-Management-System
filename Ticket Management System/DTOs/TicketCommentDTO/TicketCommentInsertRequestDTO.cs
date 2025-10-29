@@ -3,6 +3,7 @@
     public class TicketCommentInsertRequestDTO
     {
         public string Content { get; set; }
+        public string AuthorName { get; set; }
 
     }
 }

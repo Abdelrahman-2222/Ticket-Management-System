@@ -1,16 +1,25 @@
-﻿using Ticket_Management_System.DTOs.TicketCommentDTO;
-using Ticket_Management_System.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Ticket_Management_System.DTOs.TicketCommentDTO;
 
 namespace Ticket_Management_System.DTOs.TicketDTO
 {
-    public class TicketInsertRequestDTO
+    public sealed class TicketInsertRequestDTO
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime SubmittedAt { get; set; }
-        public int? SupportAgentId { get; set; }
-        public int TicketCategoryId { get; set; }
-        public ICollection<TicketCommentInsertRequestDTO> Comments { get; set; }
+        [Required]
+        public required string Title { get; init; }
 
+        [Required]
+        public required string Description { get; init; }
+        public int EmployeeId { get; init; }
+
+        public int? SupportAgentId { get; init; }
+
+        [Required]
+        public required int TicketCategoryId { get; init; }
+        public int TicketStatusId { get; init; }
+
+        public int TicketPriorityId { get; init; }
+
+        public List<TicketCommentInsertRequestDTO> Comments { get; init; } = [];
     }
 }

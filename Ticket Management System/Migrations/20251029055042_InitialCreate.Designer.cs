@@ -12,7 +12,7 @@ using Ticket_Management_System.Data;
 namespace Ticket_Management_System.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    [Migration("20251029042954_InitialCreate")]
+    [Migration("20251029055042_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -115,7 +115,7 @@ namespace Ticket_Management_System.Migrations
                     b.Property<DateTime?>("ResolvedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("SubmittedAt")
+                    b.Property<DateTimeOffset?>("SubmittedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("SupportAgentId")
@@ -171,17 +171,17 @@ namespace Ticket_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("EmployeeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TicketId")
                         .HasColumnType("int");
@@ -208,7 +208,7 @@ namespace Ticket_Management_System.Migrations
                     b.Property<int>("TicketId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime?>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -233,7 +233,7 @@ namespace Ticket_Management_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketPrioritys");
+                    b.ToTable("TicketPriorities");
                 });
 
             modelBuilder.Entity("Ticket_Management_System.Models.TicketStatus", b =>

@@ -52,7 +52,7 @@ namespace Ticket_Management_System.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketPrioritys",
+                name: "TicketPriorities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -61,7 +61,7 @@ namespace Ticket_Management_System.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketPrioritys", x => x.Id);
+                    table.PrimaryKey("PK_TicketPriorities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,7 +106,7 @@ namespace Ticket_Management_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubmittedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    SubmittedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ResolvedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     SupportAgentId = table.Column<int>(type: "int", nullable: true),
@@ -136,9 +136,9 @@ namespace Ticket_Management_System.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Tickets_TicketPrioritys_TicketPriorityId",
+                        name: "FK_Tickets_TicketPriorities_TicketPriorityId",
                         column: x => x.TicketPriorityId,
-                        principalTable: "TicketPrioritys",
+                        principalTable: "TicketPriorities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -156,8 +156,8 @@ namespace Ticket_Management_System.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TicketId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -178,7 +178,7 @@ namespace Ticket_Management_System.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ChangeDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TicketId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -255,7 +255,7 @@ namespace Ticket_Management_System.Migrations
                 name: "TicketCategories");
 
             migrationBuilder.DropTable(
-                name: "TicketPrioritys");
+                name: "TicketPriorities");
 
             migrationBuilder.DropTable(
                 name: "TicketStatuses");

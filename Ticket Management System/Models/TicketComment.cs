@@ -30,12 +30,12 @@ namespace Ticket_Management_System.Models
         /// <summary>
         /// Gets or sets the timestamp when the comment was created.
         /// </summary>
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset? CreatedAt { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
-        /// Gets or sets the display name of the employee who authored the comment.
+        /// Gets or sets the display name of the author who authored the comment.
         /// </summary>
-        public string EmployeeName { get; set; }
+        public string AuthorName { get; set; }
 
         /// <summary>
         /// Gets or sets the foreign key of the associated <see cref="Ticket"/>.

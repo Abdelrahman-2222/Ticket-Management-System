@@ -27,7 +27,7 @@ namespace Ticket_Management_System.Models
         /// <summary>
         /// Gets or sets the timestamp when the change was recorded.
         /// </summary>
-        public DateTime Timestamp { get; set; }
+        public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
         /// Gets or sets the foreign key of the associated <see cref="Ticket"/>.
