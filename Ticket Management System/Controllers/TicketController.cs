@@ -52,7 +52,7 @@ namespace Ticket_Management_System.Controllers
             return CreatedAtAction(nameof(CreateTicket), new { id = createdTicket.Id }, createdTicket);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<TicketGetIdResponse>> GetTicketById(int id)
+        public async Task<ActionResult<TicketGetIdResponseDTO>> GetTicketById(int id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id);
             if (ticket == null)
@@ -62,7 +62,7 @@ namespace Ticket_Management_System.Controllers
             return Ok(ticket);
         }
         [HttpGet]
-        public async Task<ActionResult<List<TicketGetIdResponse>>> GetAllTickets()
+        public async Task<ActionResult<List<TicketGetIdResponseDTO>>> GetAllTickets()
         {
             var tickets = await _ticketService.GetAllTicketsAsync();
             if (tickets == null || !tickets.Any())

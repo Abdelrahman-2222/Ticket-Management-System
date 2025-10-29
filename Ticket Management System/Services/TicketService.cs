@@ -31,10 +31,10 @@ namespace Ticket_Management_System.Services
             _context = context;
         }
 
-        public async Task<TicketGetIdResponse> GetTicketByIdAsync(int id)
+        public async Task<TicketGetIdResponseDTO> GetTicketByIdAsync(int id)
         {
             var ticket = await _context.Tickets
-                .Select(T => new TicketGetIdResponse
+                .Select(T => new TicketGetIdResponseDTO
                 {
                     Id = T.Id,
                     Title = T.Name,
@@ -191,10 +191,10 @@ namespace Ticket_Management_System.Services
             _context.SaveChanges();
         }
 
-        public async Task<List<TicketGetIdResponse>> GetAllTicketsAsync()
+        public async Task<List<TicketGetIdResponseDTO>> GetAllTicketsAsync()
         {
             var tickets = await _context.Tickets
-                .Select(T => new TicketGetIdResponse
+                .Select(T => new TicketGetIdResponseDTO
                 {
                     Id = T.Id,
                     Title = T.Name,

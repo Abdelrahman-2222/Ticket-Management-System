@@ -7,7 +7,7 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.DTOs.TicketDTO
 {
-    public class TicketGetIdResponse
+    public class TicketGetIdResponseDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }
