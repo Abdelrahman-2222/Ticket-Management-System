@@ -51,5 +51,45 @@ namespace Ticket_Management_System.Controllers
             }
             return CreatedAtAction(nameof(CreateTicket), new { id = createdTicket.Id }, createdTicket);
         }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TicketGetIdResponse>> GetTicketById(int id)
+        {
+            var ticket = await _ticketService.GetTicketByIdAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            return Ok(ticket);
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<TicketGetIdResponse>>> GetAllTickets()
+        {
+            var tickets = await _ticketService.GetAllTicketsAsync();
+            if (tickets == null || !tickets.Any())
+            {
+                return NotFound();
+            }
+            return Ok(tickets);
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<TicketUpdateResponeDTO>> UpdateTicket(int id, TicketUpdateRequestDTO ticketUpdateRequestDTO)
+        {
+            var updatedTicket = await _ticketService.UpdateTicketAsync(id, ticketUpdateRequestDTO);
+            if (updatedTicket == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedTicket);
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeleteTicket(int id)
+        {
+            var result = await _ticketService.DeleteTicketAsync(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
