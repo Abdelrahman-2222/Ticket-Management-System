@@ -5,16 +5,28 @@ using Ticket_Management_System.DTOs.TicketHistoryDTO;
 
 namespace Ticket_Management_System.Controllers
 {
+    /// <summary>
+    /// Controller responsible for managing ticket history actions.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class TicketHistoryController : ControllerBase
     {
         private readonly ITicketHistoryService _ticketHistoryService;
+
+        /// <summary>
+        /// Constructor to inject TicketHistory service.
+        /// </summary>
         public TicketHistoryController(ITicketHistoryService ticketHistoryService)
         {
             _ticketHistoryService = ticketHistoryService;
         }
-        // GET by ID
+
+        /// <summary>
+        /// Gets a specific ticket history record by id.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <returns>Ticket history details</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> GetTicketHistoryById(int id)
         {
@@ -23,7 +35,11 @@ namespace Ticket_Management_System.Controllers
                 return NotFound();
             return Ok(ticketHistory);
         }
-        // GET all
+
+        /// <summary>
+        /// Gets all ticket history records.
+        /// </summary>
+        /// <returns>List of ticket history records</returns>
         [HttpGet]
         public async Task<ActionResult<List<TicketHistoryResponseGetByIdDTO>>> GetAllTicketHistories()
         {
@@ -32,7 +48,13 @@ namespace Ticket_Management_System.Controllers
                 return NotFound();
             return Ok(ticketHistories);
         }
-        // PUT
+
+        /// <summary>
+        /// Updates a ticket history record by id.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <param name="ticketHistoryUpdateRequestDTO">Updated ticket history data</param>
+        /// <returns>Updated ticket history record</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> UpdateTicketHistory(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
         {
@@ -41,7 +63,12 @@ namespace Ticket_Management_System.Controllers
                 return NotFound();
             return Ok(updatedTicketHistory);
         }
-        // Delete
+
+        /// <summary>
+        /// Deletes a ticket history record by id.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <returns>Deletion message</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicketHistory(int id)
         {
@@ -51,7 +78,11 @@ namespace Ticket_Management_System.Controllers
             return Ok(result);
         }
 
-        // POST
+        /// <summary>
+        /// Creates a new ticket history record.
+        /// </summary>
+        /// <param name="ticketHistoryInsertRequestDTO">Ticket history creation data</param>
+        /// <returns>Created ticket history record</returns>
         [HttpPost]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> CreateTicketHistory(TicketHistoryInsertRequestDTO ticketHistoryInsertRequestDTO)
         {
@@ -59,6 +90,6 @@ namespace Ticket_Management_System.Controllers
             if (createdTicketHistory == null)
                 return BadRequest();
             return CreatedAtAction(nameof(GetTicketHistoryById), new { id = createdTicketHistory.Id }, createdTicketHistory);
-        }   
+        }
     }
 }
