@@ -21,11 +21,9 @@ namespace Ticket_Management_System.Services
             _context = context;
         }
 
-        
-
         public async Task<List<TicketCategoryResponseDTO>> GetAllTicketCategoryAsync()
         {
-            var ticketCategories = _context.TicketCategories
+            var ticketCategories = await _context.TicketCategories
                 .Select(C => new TicketCategoryResponseDTO
                 {
                     Id = C.Id,
@@ -37,7 +35,7 @@ namespace Ticket_Management_System.Services
                         Description = t.Description,
                         SupportAgentName = t.SupportAgent.Name,
                     }).ToList(),
-                }).ToList();
+                }).ToListAsync();
 
             return ticketCategories;
         }
@@ -58,7 +56,7 @@ namespace Ticket_Management_System.Services
                         SupportAgentName = t.SupportAgent.Name,
                     }).ToList()
                 })
-                .FirstOrDefaultAsync(sa => sa.Id == id);
+                .SingleOrDefaultAsync(sa => sa.Id == id);
 
             if (ticketCategory == null)
             {
@@ -76,8 +74,8 @@ namespace Ticket_Management_System.Services
                 Name = ticketCategoryRequestDTO.Name,
             };
 
-            _context.TicketCategories.Add(ticketCategory);
-            SaveChangesAsync();
+            await _context.TicketCategories.AddAsync(ticketCategory);
+            await SaveChangesAsync();
 
             return new TicketCategoryResponseDTO
             {
@@ -90,17 +88,15 @@ namespace Ticket_Management_System.Services
 
         public async Task<TicketCategoryResponseDTO> UpdateTicketCategoryAsync(int id, TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
-            var ticketCategory = _context.TicketCategories.Find(id);
+            var ticketCategory = await _context.TicketCategories.FindAsync(id);
             if (ticketCategory == null)
             {
                 throw new KeyNotFoundException($"Ticket Category Agent with ID {id} not found.");
             }
 
-            ticketCategory.Id = id;
             ticketCategory.Name = ticketCategoryRequestDTO.Name;
 
-            _context.TicketCategories.Update(ticketCategory);
-            SaveChangesAsync();
+            await SaveChangesAsync();
 
             var ticketCategoryDTO = new TicketCategoryResponseDTO
             {
@@ -124,7 +120,7 @@ namespace Ticket_Management_System.Services
 
             _context.TicketCategories.Remove(ticketCategory);
 
-            SaveChangesAsync();
+            await SaveChangesAsync();
 
             return $"Ticket Category with ID {id} has been deleted.";
         }

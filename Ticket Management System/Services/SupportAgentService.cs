@@ -102,6 +102,7 @@ namespace Ticket_Management_System.Services
             };
 
             _context.SupportAgents.Add(supportAgent);
+            await _context.SupportAgents.AddAsync(supportAgent);
             await SaveChangesAsync();
 
             return new SupportAgentGetByIdResponseDTO
@@ -134,8 +135,7 @@ namespace Ticket_Management_System.Services
             supportAgent.Name = supportAgentRequestDTO.Name;
             supportAgent.Specialization = supportAgentRequestDTO.Specialization;
 
-            _context.SupportAgents.Update(supportAgent);
-            SaveChangesAsync();
+            await SaveChangesAsync();
 
             var responseDTO = new SupportAgentGetByIdResponseDTO
             {
@@ -165,7 +165,7 @@ namespace Ticket_Management_System.Services
 
             _context.SupportAgents.Remove(supportAgent);
 
-            SaveChangesAsync();
+            await SaveChangesAsync();
 
             return $"Support Agent with ID {id} has been deleted.";
         }

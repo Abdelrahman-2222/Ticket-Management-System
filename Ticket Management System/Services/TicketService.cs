@@ -6,6 +6,7 @@ using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.SupportAgentDTO;
 using Ticket_Management_System.DTOs.TicketCategoryDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
+using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
@@ -13,11 +14,8 @@ using Ticket_Management_System.Models;
 namespace Ticket_Management_System.Services
 {
     /// <summary>
-    /// Provides ticket-related operations backed by Entity Framework Core.
+    /// Provides business logic for managing tickets including creation, retrieval, updating, and deletion.
     /// </summary>
-    /// <remarks>
-    /// This service encapsulates creation of tickets and persistence of changes using <see cref="TicketContext"/>.
-    /// </remarks>
     public class TicketService : ITicketService
     {
         private readonly TicketContext _context;
@@ -25,12 +23,17 @@ namespace Ticket_Management_System.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="TicketService"/> class.
         /// </summary>
-        /// <param name="context">The EF Core <see cref="TicketContext"/> used to access the data store.</param>
+        /// <param name="context">The database context used to access ticket data.</param>
         public TicketService(TicketContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a ticket by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket.</param>
+        /// <returns>A <see cref="TicketGetIdResponseDTO"/> representing the ticket details if found; otherwise, null.</returns>
         public async Task<TicketGetIdResponseDTO> GetTicketByIdAsync(int id)
         {
             var ticket = await _context.Tickets
@@ -73,40 +76,18 @@ namespace Ticket_Management_System.Services
                         Name = T.Category != null ? T.Category.Name : null
                     }
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync(i => i.Id == id);
 
             return ticket;
         }
 
         /// <summary>
-        /// Creates a new <see cref="Ticket"/> with optional initial comments and assigned support agent.
+        /// Creates a new ticket with the provided details.
         /// </summary>
-        /// <param name="ticketRequestDTO">
-        /// The request payload containing the ticket title, description, category, priority, optional support agent id,
-        /// and optional initial comments.
-        /// </param>
-        /// <returns>
-        /// A <see cref="TicketInsertResponseDTO"/> containing key details of the created ticket,
-        /// including its identifier and submission timestamp.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="ticketRequestDTO"/> is null.</exception>
-        /// <exception cref="ArgumentException">
-        /// Thrown when:
-        /// <list type="bullet">
-        /// <item><description><c>Title</c> is null, empty, or whitespace.</description></item>
-        /// <item><description><c>Description</c> is null, empty, or whitespace.</description></item>
-        /// <item><description><c>SupportAgentId</c> is provided but does not reference an existing agent.</description></item>
-        /// <item><description><c>TicketCategoryId</c> does not reference an existing category.</description></item>
-        /// <item><description><c>TicketPriorityId</c> does not reference an existing priority.</description></item>
-        /// <item><description>Any provided comment has empty or whitespace <c>Content</c>.</description></item>
-        /// </list>
-        /// </exception>
-        /// <remarks>
-        /// The method performs validation, creates the ticket and related comments, persists the changes,
-        /// and returns a lightweight DTO of the created entity.
-        /// </remarks>
-        /// <seealso cref="Ticket"/>
-        /// <seealso cref="TicketComment"/>
+        /// <param name="ticketRequestDTO">The request DTO containing the data for the new ticket.</param>
+        /// <returns>A <see cref="TicketInsertResponseDTO"/> with the details of the created ticket.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the request DTO is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when required fields are missing or invalid.</exception>
         public async Task<TicketInsertResponseDTO> CreateTicketAsync(TicketInsertRequestDTO ticketRequestDTO)
         {
             if (ticketRequestDTO == null)
@@ -178,19 +159,22 @@ namespace Ticket_Management_System.Services
                 Title = newTicket.Name,
                 Description = newTicket.Description,
                 SupportAgentName = supportAgentName,
-                SubmittedAt = newTicket.SubmittedAt.HasValue ? newTicket.SubmittedAt.Value.UtcDateTime : default(DateTime),
+                SubmittedAt = newTicket.SubmittedAt.HasValue ? newTicket.SubmittedAt.Value.UtcDateTime : default,
             };
         }
 
         /// <summary>
         /// Persists any pending changes in the underlying <see cref="TicketContext"/> to the database.
         /// </summary>
-        /// <returns>A task representing the asynchronous save operation.</returns>
         public async Task SaveChangesAsync()
         {
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Retrieves all tickets in the system.
+        /// </summary>
+        /// <returns>A list of <see cref="TicketGetIdResponseDTO"/> representing ticket data.</returns>
         public async Task<List<TicketGetIdResponseDTO>> GetAllTicketsAsync()
         {
             var tickets = await _context.Tickets
@@ -237,6 +221,13 @@ namespace Ticket_Management_System.Services
             return tickets;
         }
 
+        /// <summary>
+        /// Updates a ticket's title and description.
+        /// </summary>
+        /// <param name="id">The id of the ticket to update.</param>
+        /// <param name="ticketUpdateRequestDTO">The request DTO containing new values.</param>
+        /// <returns>A <see cref="TicketUpdateResponeDTO"/> containing updated data.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if ticket is not found.</exception>
         public async Task<TicketUpdateResponeDTO> UpdateTicketAsync(int id, TicketUpdateRequestDTO ticketUpdateRequestDTO)
         {
             var ticket = await _context.Tickets.FindAsync(id);
@@ -244,19 +235,27 @@ namespace Ticket_Management_System.Services
             {
                 throw new KeyNotFoundException($"Ticket with ID {id} not found.");
             }
+
             ticket.Name = ticketUpdateRequestDTO.Title;
             ticket.Description = ticketUpdateRequestDTO.Description;
+
             _context.Tickets.Update(ticket);
             await _context.SaveChangesAsync();
-            var responseDTO = new TicketUpdateResponeDTO
+
+            return new TicketUpdateResponeDTO
             {
                 Id = ticket.Id,
                 Title = ticket.Name,
                 Description = ticket.Description
             };
-            return responseDTO;
         }
 
+        /// <summary>
+        /// Deletes a ticket by its unique identifier.
+        /// </summary>
+        /// <param name="id">The id of the ticket to delete.</param>
+        /// <returns>A confirmation message.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the ticket does not exist.</exception>
         public async Task<string> DeleteTicketAsync(int id)
         {
             var ticketTobeDeleted = await _context.Tickets.FindAsync(id);
