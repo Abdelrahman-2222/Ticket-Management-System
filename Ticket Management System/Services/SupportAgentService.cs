@@ -7,6 +7,10 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Service class responsible for managing Support Agent operations,
+    /// including retrieving, creating, updating, and deleting support agents.
+    /// </summary>
     public class SupportAgentService : ISupportAgentService
     {
         private readonly TicketContext _context;
@@ -20,6 +24,13 @@ namespace Ticket_Management_System.Services
             _context = context;
         }
 
+
+        /// <summary>
+        /// Retrieves all support agents along with their associated tickets.
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="SupportAgentGetByIdResponseDTO"/> objects containing details of all support agents and their tickets.
+        /// </returns>
         public async Task<List<SupportAgentGetByIdResponseDTO>> GetAllSupportAgentsAsync()
         {
             var supportAgents = await _context.SupportAgents
@@ -39,6 +50,15 @@ namespace Ticket_Management_System.Services
             return supportAgents;
         }
 
+
+        /// <summary>
+        /// Retrieves a single support agent by their unique identifier, including their tickets.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent.</param>
+        /// <returns>
+        /// A <see cref="SupportAgentGetByIdResponseDTO"/> object containing the support agent’s details and their tickets.
+        /// Returns <c>null</c> if the support agent is not found.
+        /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> GetSupportAgentByIdAsync(int id)
         {
             var supportAgent = await _context.SupportAgents
@@ -65,6 +85,15 @@ namespace Ticket_Management_System.Services
             return supportAgent;
         }
 
+
+
+        /// <summary>
+        /// Creates a new support agent in the system.
+        /// </summary>
+        /// <param name="supportAgentRequestDTO">The data transfer object containing support agent details to be created.</param>
+        /// <returns>
+        /// A <see cref="SupportAgentGetByIdResponseDTO"/> containing the newly created support agent’s details.
+        /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> CreateSupportAgentAsync(SupportAgentRequestDTO supportAgentRequestDTO)
         {
             var supportAgent = new SupportAgent
@@ -85,6 +114,15 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Updates an existing support agent’s information.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent to update.</param>
+        /// <param name="supportAgentRequestDTO">The updated details for the support agent.</param>
+        /// <returns>
+        /// A <see cref="SupportAgentGetByIdResponseDTO"/> containing the updated support agent’s details.
+        /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> UpdateSupportAgentAsync(int id, SupportAgentRequestDTO supportAgentRequestDTO)
         {
             var supportAgent = _context.SupportAgents.Find(id);
@@ -109,6 +147,15 @@ namespace Ticket_Management_System.Services
             return responseDTO;
         }
 
+
+
+        /// <summary>
+        /// Deletes a support agent from the system by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent to delete.</param>
+        /// <returns>
+        /// A confirmation message indicating that the support agent has been deleted.
+        /// </returns>
         public async Task<string> DeleteSupportAgentAsync(int id)
         {
             var supportAgent = await _context.SupportAgents.FindAsync(id);
@@ -124,6 +171,10 @@ namespace Ticket_Management_System.Services
             return $"Support Agent with ID {id} has been deleted.";
         }
 
+
+        /// <summary>
+        /// Persists all pending changes made in the current database context.
+        /// </summary>
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
