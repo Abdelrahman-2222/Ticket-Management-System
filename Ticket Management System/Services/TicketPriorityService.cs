@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
+using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.Models;
 
@@ -138,6 +139,39 @@ namespace Ticket_Management_System.Services
             await _context.SaveChangesAsync();
 
             return $"Ticket Priority with ID {id} deleted successfully.";
+        }
+        /// <summary>
+        /// Return a ticket priority by its unique identifier with info on ticket details.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket priority to delete.</param>
+        /// <returns>A specific ticket priority with it's ticket details.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown if the ticket is not found.</exception>
+        public async Task<TicketPriorityAllDetailsResponseDTO> GetAllTicketPriorityDetailsByIdAsync(int id)
+        {
+            var ticketPriorityDetails = await _context.TicketPriorities
+                .Select(tp => new TicketPriorityAllDetailsResponseDTO
+                {
+                    Id = tp.Id,
+                    Name = tp.Name,
+                    Tickets = tp.Tickets.Select(t => new TicketGetForStatusDTO
+                    {
+                        Id = t.Id,
+                        Title = t.Name,
+                        Description = t.Description,
+                        SubmittedAt = t.SubmittedAt
+                    }).ToList()
+                })
+                .SingleOrDefaultAsync(tp => tp.Id == id);
+            if (ticketPriorityDetails == null)
+            {
+                throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
+            }
+            if (ticketPriorityDetails.Tickets == null)
+            {
+                throw new KeyNotFoundException($"Ticket with ID {id} not found.");
+            }
+            return ticketPriorityDetails;
         }
     }
 }
