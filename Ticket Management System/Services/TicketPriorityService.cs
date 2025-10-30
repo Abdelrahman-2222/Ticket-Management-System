@@ -1,8 +1,143 @@
-﻿using Ticket_Management_System.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using Ticket_Management_System.Contracts;
+using Ticket_Management_System.Data;
+using Ticket_Management_System.DTOs.TicketPriorityDTO;
+using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Provides services for managing ticket priorities including creation, retrieval, updating, and deletion operations.
+    /// </summary>
     public class TicketPriorityService : ITicketPriorityService
     {
+        private readonly TicketContext _context;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TicketPriorityService"/> class.
+        /// </summary>
+        /// <param name="context">The database context used to access ticket priority data.</param>
+        public TicketPriorityService(TicketContext context)
+        {
+            _context = context;
+        }
+
+        /// <summary>
+        /// Persists any pending changes in the underlying <see cref="TicketContext"/> to the database.
+        /// </summary>
+        /// <returns>A task representing the asynchronous save operation.</returns>
+        public async Task SaveChangesAsync()
+        {
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Creates a new ticket priority based on the provided request data.
+        /// </summary>
+        /// <param name="ticketPriorityRequestDTO">The DTO containing the ticket priority data.</param>
+        /// <returns>The created <see cref="TicketPriorityResponseDTO"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the request DTO is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the name field is invalid.</exception>
+        public async Task<TicketPriorityResponseDTO> CreateTicketPriorityAsync(TicketPriorityRequestDTO ticketPriorityRequestDTO)
+        {
+            if (ticketPriorityRequestDTO == null)
+                throw new ArgumentNullException(nameof(ticketPriorityRequestDTO));
+
+            if (string.IsNullOrWhiteSpace(ticketPriorityRequestDTO.Name))
+                throw new ArgumentException("Name is required.", nameof(ticketPriorityRequestDTO.Name));
+
+            var newTicketPriority = new TicketPriority
+            {
+                Name = ticketPriorityRequestDTO.Name.Trim()
+            };
+
+            _context.TicketPriorities.Add(newTicketPriority);
+            await _context.SaveChangesAsync();
+
+            return new TicketPriorityResponseDTO
+            {
+                Id = newTicketPriority.Id,
+                Name = newTicketPriority.Name,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves a ticket priority by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket priority.</param>
+        /// <returns>The matching <see cref="TicketPriorityResponseDTO"/>, or null if not found.</returns>
+        public async Task<TicketPriorityResponseDTO> GetTicketPriorityByIdAsync(int id)
+        {
+            var ticketPriority = await _context.TicketPriorities
+                .Where(tp => tp.Id == id)
+                .Select(tp => new TicketPriorityResponseDTO
+                {
+                    Id = tp.Id,
+                    Name = tp.Name
+                })
+                .FirstOrDefaultAsync();
+
+            return ticketPriority;
+        }
+
+        /// <summary>
+        /// Retrieves all ticket priorities from the database.
+        /// </summary>
+        /// <returns>A list of <see cref="TicketPriorityResponseDTO"/> objects.</returns>
+        public async Task<List<TicketPriorityResponseDTO>> GetAllTicketPrioritysAsync()
+        {
+            var ticketPrioritys = await _context.TicketPriorities
+                .Select(tp => new TicketPriorityResponseDTO
+                {
+                    Id = tp.Id,
+                    Name = tp.Name,
+                }).ToListAsync();
+
+            return ticketPrioritys;
+        }
+
+        /// <summary>
+        /// Updates an existing ticket priority with the specified ID using the provided data.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket priority to update.</param>
+        /// <param name="ticketPriorityRequestDTO">The DTO containing updated ticket priority data.</param>
+        /// <returns>The updated <see cref="TicketPriorityResponseDTO"/>.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
+        public async Task<TicketPriorityResponseDTO> UpdateTicketPriorityAsync(int id, TicketPriorityRequestDTO ticketPriorityRequestDTO)
+        {
+            var ticketPriority = await _context.TicketPriorities.FindAsync(id);
+
+            if (ticketPriority == null)
+                throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
+
+            ticketPriority.Name = ticketPriorityRequestDTO.Name;
+
+            _context.TicketPriorities.Update(ticketPriority);
+            await _context.SaveChangesAsync();
+
+            return new TicketPriorityResponseDTO
+            {
+                Id = ticketPriority.Id,
+                Name = ticketPriority.Name,
+            };
+        }
+
+        /// <summary>
+        /// Deletes a ticket priority by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket priority to delete.</param>
+        /// <returns>A message indicating successful deletion.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
+        public async Task<string> DeleteTicketPriorityAsync(int id)
+        {
+            var TicketPriorityTobeDeleted = await _context.TicketPriorities.FindAsync(id);
+            if (TicketPriorityTobeDeleted == null)
+                throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
+
+            _context.TicketPriorities.Remove(TicketPriorityTobeDeleted);
+            await _context.SaveChangesAsync();
+
+            return $"Ticket Priority with ID {id} deleted successfully.";
+        }
     }
 }
