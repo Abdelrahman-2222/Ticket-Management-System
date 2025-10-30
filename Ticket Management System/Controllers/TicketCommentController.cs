@@ -4,6 +4,9 @@ using Ticket_Management_System.DTOs.TicketCommentDTO;
 
 namespace Ticket_Management_System.Controllers
 {
+    /// <summary>
+    /// Controller responsible for managing ticket comments.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class TicketCommentController : ControllerBase
@@ -23,6 +26,13 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all ticket comments asynchronously.
+        /// </summary>
+        /// <returns>
+        /// A list of all <see cref="TicketCommentResponseDTO"/> objects.  
+        /// Returns <see cref="NotFoundResult"/> if no comments exist.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult<List<TicketCommentResponseDTO>>> GetAllTicketComments()
         {
@@ -37,6 +47,14 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves a specific ticket comment by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket comment.</param>
+        /// <returns>
+        /// The <see cref="TicketCommentResponseDTO"/> associated with the specified ID.  
+        /// Returns <see cref="NotFoundResult"/> if the comment does not exist.
+        /// </returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketCommentResponseDTO>> GetTicketCommentById(int id)
         {
@@ -51,6 +69,15 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+
+        /// <summary>
+        /// Creates a new ticket comment.
+        /// </summary>
+        /// <param name="ticketCommentRequestDTO">The data transfer object containing the new comment details.</param>
+        /// <returns>
+        /// The created <see cref="TicketCommentResponseDTO"/> object.  
+        /// Returns <see cref="BadRequestResult"/> if the creation fails.
+        /// </returns>
         [HttpPost]
         public async Task<ActionResult<TicketCommentResponseDTO>> CreateTicketComment(TicketCommentRequestDTO ticketCommentRequestDTO)
         {
@@ -64,6 +91,16 @@ namespace Ticket_Management_System.Controllers
             return CreatedAtAction(nameof(GetTicketCommentById), new { id = createdTicketComment.Id }, createdTicketComment);
         }
 
+
+        /// <summary>
+        /// Updates an existing ticket comment.
+        /// </summary>
+        /// <param name="id">The unique identifier of the comment to update.</param>
+        /// <param name="ticketCommentRequestDTO">The data transfer object containing updated comment details.</param>
+        /// <returns>
+        /// The updated <see cref="TicketCommentResponseDTO"/> object.  
+        /// Returns <see cref="NotFoundResult"/> if the comment does not exist.
+        /// </returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketCommentResponseDTO>> UpdateTicketComment(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
@@ -78,6 +115,15 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+
+        /// <summary>
+        /// Deletes a specific ticket comment by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the comment to delete.</param>
+        /// <returns>
+        /// Returns <see cref="NoContentResult"/> if deletion is successful.  
+        /// Returns <see cref="NotFoundResult"/> if the comment does not exist.
+        /// </returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicketComment(int id)
         {

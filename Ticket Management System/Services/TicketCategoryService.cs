@@ -8,6 +8,10 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Service responsible for managing ticket categories.
+    /// Handles CRUD operations and database interactions for <see cref="TicketCategory"/> entities.
+    /// </summary>
     public class TicketCategoryService : ITicketCategoryService
     {
         private readonly TicketContext _context;
@@ -21,8 +25,15 @@ namespace Ticket_Management_System.Services
             _context = context;
         }
 
-        
 
+
+        /// <summary>
+        /// Retrieves all ticket categories from the database.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a list of <see cref="TicketCategoryResponseDTO"/> objects.
+        /// </returns>
         public async Task<List<TicketCategoryResponseDTO>> GetAllTicketCategoryAsync()
         {
             var ticketCategories = _context.TicketCategories
@@ -43,6 +54,14 @@ namespace Ticket_Management_System.Services
         }
 
 
+        /// <summary>
+        /// Retrieves a specific ticket category by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the ticket category to retrieve.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the matching <see cref="TicketCategoryResponseDTO"/> if found; otherwise, <c>null</c>.
+        /// </returns>
         public async Task<TicketCategoryResponseDTO> GetTicketCategoryByIdAsync(int id)
         { 
             var ticketCategory = await _context.TicketCategories
@@ -69,6 +88,14 @@ namespace Ticket_Management_System.Services
         }
 
 
+        /// <summary>
+        /// Creates a new ticket category in the database.
+        /// </summary>
+        /// <param name="ticketCategoryRequestDTO">The data used to create the new ticket category.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the newly created <see cref="TicketCategoryResponseDTO"/>.
+        /// </returns>
         public async Task<TicketCategoryResponseDTO> CreateTicketCategoryAsync(TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
             var ticketCategory = new TicketCategory
@@ -86,8 +113,16 @@ namespace Ticket_Management_System.Services
             };
         }
 
-        
 
+        /// <summary>
+        /// Updates an existing ticket category in the database.
+        /// </summary>
+        /// <param name="id">The ID of the ticket category to update.</param>
+        /// <param name="ticketCategoryRequestDTO">The new data for the ticket category.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the updated <see cref="TicketCategoryResponseDTO"/>.
+        /// </returns>
         public async Task<TicketCategoryResponseDTO> UpdateTicketCategoryAsync(int id, TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
             var ticketCategory = _context.TicketCategories.Find(id);
@@ -112,6 +147,14 @@ namespace Ticket_Management_System.Services
         }
 
 
+        /// <summary>
+        /// Deletes a ticket category from the database.
+        /// </summary>
+        /// <param name="id">The ID of the ticket category to delete.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a confirmation message if the deletion was successful.
+        /// </returns>
         public async Task<string> DeleteTicketCategoryAsync(int id)
         {
 
@@ -130,6 +173,10 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Persists all pending changes to the database asynchronously.
+        /// </summary>
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

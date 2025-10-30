@@ -6,6 +6,10 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Service responsible for managing ticket comments.
+    /// Handles creation, retrieval, updating, and deletion of <see cref="TicketComment"/> entities.
+    /// </summary>
     public class TicketCommentsService : ITicketCommentsService
     {
         private readonly TicketContext _context;
@@ -20,7 +24,13 @@ namespace Ticket_Management_System.Services
         }
 
 
-
+        /// <summary>
+        /// Retrieves all ticket comments from the database.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a list of <see cref="TicketCommentResponseDTO"/> objects.
+        /// </returns>
         public async Task<List<TicketCommentResponseDTO>> GetAllTicketCommentAsync()
         {
             var ticketComments = await _context.TicketComments
@@ -36,6 +46,15 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Retrieves a specific ticket comment by its unique ID.
+        /// </summary>
+        /// <param name="id">The ID of the ticket comment to retrieve.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the corresponding <see cref="TicketCommentResponseDTO"/> if found; otherwise, <c>null</c>.
+        /// </returns>
         public async Task<TicketCommentResponseDTO> GetTicketCommentByIdAsync(int id)
         {
             var ticketComment = await _context.TicketComments
@@ -52,6 +71,15 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Creates a new ticket comment in the database.
+        /// </summary>
+        /// <param name="ticketCommentRequestDTO">The data used to create the new ticket comment.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the newly created <see cref="TicketCommentResponseDTO"/>.
+        /// </returns>
         public async Task<TicketCommentResponseDTO> CreateTicketCommentAsync(TicketCommentRequestDTO ticketCommentRequestDTO)
         {
             var ticketName = await _context.Tickets
@@ -82,6 +110,16 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Updates an existing ticket comment in the database.
+        /// </summary>
+        /// <param name="id">The ID of the ticket comment to update.</param>
+        /// <param name="ticketCommentRequestDTO">The updated data for the ticket comment.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the updated <see cref="TicketCommentResponseDTO"/>.
+        /// </returns>
         public async Task<TicketCommentResponseDTO> UpdateTicketCommentAsync(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
             var ticketComment = await _context.TicketComments.FindAsync(id);
@@ -111,6 +149,16 @@ namespace Ticket_Management_System.Services
             return responseDTO;
         }
 
+
+
+        /// <summary>
+        /// Deletes a ticket comment from the database.
+        /// </summary>
+        /// <param name="id">The ID of the ticket comment to delete.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a confirmation message if the deletion was successful.
+        /// </returns>
         public async Task<string> DeleteTicketCommentAsync(int id)
         {
             var ticketComment = await _context.TicketComments.FindAsync(id);
@@ -126,6 +174,10 @@ namespace Ticket_Management_System.Services
         }
 
 
+
+        /// <summary>
+        /// Saves all pending changes to the database asynchronously.
+        /// </summary>
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
