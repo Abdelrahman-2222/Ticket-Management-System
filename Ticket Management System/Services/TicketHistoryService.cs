@@ -7,15 +7,26 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Provides business logic for managing Tickets History including creation, retrieval, updating, and deletion.
+    /// </summary>
     public class TicketHistoryService : ITicketHistoryService
     {
         private readonly TicketContext _context;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TicketHistoryService"/> class.
+        /// </summary>
+        /// <param name="context">The database context used to access ticket History data.</param>
         public TicketHistoryService(TicketContext ticketContext)
         {
             _context = ticketContext;
         }
 
-        // GET by ID
+        /// <summary>
+        /// Retrieves ticket history by its ID.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <returns>Returns ticket history details if found</returns>
         public async Task<TicketHistoryResponseGetByIdDTO> GetTicketHistoryByIdAsync(int id)
         {
             var ticket = await _context.TicketHistories.Select(TH => new TicketHistoryResponseGetByIdDTO
@@ -30,7 +41,10 @@ namespace Ticket_Management_System.Services
             return ticket;
         }
 
-        // GET all
+        /// <summary>
+        /// Retrieves all ticket histories.
+        /// </summary>
+        /// <returns>List of all ticket histories</returns>
         public async Task<List<TicketHistoryResponseGetByIdDTO>> GetAllTicketHistoriesAsync()
         {
             var ticketHistories = await _context.TicketHistories.Select(TH => new TicketHistoryResponseGetByIdDTO
@@ -45,6 +59,12 @@ namespace Ticket_Management_System.Services
             return ticketHistories;
         }
 
+        /// <summary>
+        /// Updates ticket history by ID.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <param name="ticketHistoryUpdateRequestDTO">Updated ticket history data</param>
+        /// <returns>Returns updated ticket history details</returns>
         public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
         {
             var ticketHistory = await _context.TicketHistories.FindAsync(id);
@@ -64,6 +84,11 @@ namespace Ticket_Management_System.Services
             };
         }
 
+        /// <summary>
+        /// Deletes ticket history by ID.
+        /// </summary>
+        /// <param name="id">Ticket history ID</param>
+        /// <returns>String response message</returns>
         public async Task<string> DeleteTicketHistoryAsync(int id)
         {
             var ticketHistory = await _context.TicketHistories.FindAsync(id);
@@ -75,7 +100,11 @@ namespace Ticket_Management_System.Services
             return "Ticket history deleted successfully";
         }
 
-        // POST
+        /// <summary>
+        /// Creates a new ticket history entry.
+        /// </summary>
+        /// <param name="ticketHistoryInsertRequestDTO">New ticket history data</param>
+        /// <returns>Returns created ticket history details</returns>
         public async Task<TicketHistoryResponseGetByIdDTO> CreateTicketHistoryAsync(TicketHistoryInsertRequestDTO ticketHistoryInsertRequestDTO)
         {
             var newTicketHistory = new TicketHistory
