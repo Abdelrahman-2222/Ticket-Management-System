@@ -6,7 +6,7 @@ using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
-    public class TicketCommandsService : ITicketCommandsService
+    public class TicketCommentsService : ITicketCommentsService
     {
         private readonly TicketContext _context;
 
@@ -14,7 +14,7 @@ namespace Ticket_Management_System.Services
         /// Initializes a new instance of the <see cref="TicketCommandsService"/> class.
         /// </summary>
         /// <param name="context">The EF Core <see cref="TicketContext"/> used to access the data store.</param>
-        public TicketCommandsService(TicketContext context)
+        public TicketCommentsService(TicketContext context)
         {
             _context = context;
         }

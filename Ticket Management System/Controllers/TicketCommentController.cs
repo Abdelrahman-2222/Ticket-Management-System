@@ -11,13 +11,13 @@ namespace Ticket_Management_System.Controllers
         /// <summary>
         /// Service used to handle TicketComment operations and persistence.
         /// </summary>
-        private readonly ITicketCommandsService _ticketCommentService;
+        private readonly ITicketCommentsService _ticketCommentService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicketCommentController"/> class.
         /// </summary>
         /// <param name="ticketCommentService">The TicketComment service implementation.</param>
-        public TicketCommentController(ITicketCommandsService ticketCommentService)
+        public TicketCommentController(ITicketCommentsService ticketCommentService)
         {
             _ticketCommentService = ticketCommentService;
         }
