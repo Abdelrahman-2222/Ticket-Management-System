@@ -16,9 +16,9 @@
         /// </summary>
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 
-        /// <summary>
-        /// Name of the ticket associated with this history record.
-        /// </summary>
-        public string TicketName { get; set; }
+        ///// <summary>
+        ///// Name of the ticket associated with this history record.
+        ///// </summary>
+        //public int TicketID { get; set; }
     }
 }

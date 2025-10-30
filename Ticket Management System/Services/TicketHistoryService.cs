@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
+using Ticket_Management_System.DTOs.DepartmentDTO;
+using Ticket_Management_System.DTOs.EmployeeDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.Models;
 
@@ -69,19 +72,24 @@ namespace Ticket_Management_System.Services
         {
             var ticketHistory = await _context.TicketHistories.FindAsync(id);
             if (ticketHistory == null)
-                return null;
+                return null!;
 
             ticketHistory.ChangeDescription = ticketHistoryUpdateRequestDTO.ChangeDescription;
             ticketHistory.Timestamp = ticketHistoryUpdateRequestDTO.Timestamp;
 
             await _context.SaveChangesAsync();
 
-            return new TicketHistoryResponseGetByIdDTO
-            {
-                ChangeDescription = ticketHistory.ChangeDescription,
-                Timestamp = ticketHistory.Timestamp,
-                TicketName = ticketHistory.Ticket.Name
-            };
+            var updatedTicketHistory = await _context.TicketHistories
+                .Select(e => new TicketHistoryResponseGetByIdDTO
+                {
+                    Id = e.Id,
+                    ChangeDescription = e.ChangeDescription,
+                    Timestamp = e.Timestamp,
+                    TicketName = e.Ticket != null ? e.Ticket.Name : string.Empty
+                })
+                .SingleOrDefaultAsync(e => e.Id == id);
+
+            return updatedTicketHistory!;
         }
 
         /// <summary>
