@@ -84,8 +84,6 @@ namespace Ticket_Management_System.Services
 
             return supportAgent;
         }
-
-
         /// <summary>
         /// Creates a new support agent in the system.
         /// </summary>
@@ -146,9 +144,6 @@ namespace Ticket_Management_System.Services
 
             return responseDTO;
         }
-
-
-
         /// <summary>
         /// Deletes a support agent from the system by their unique identifier.
         /// </summary>
