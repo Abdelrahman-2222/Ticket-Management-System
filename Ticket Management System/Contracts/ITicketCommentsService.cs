@@ -2,7 +2,7 @@
 
 namespace Ticket_Management_System.Contracts
 {
-    public interface ITicketCommandsService
+    public interface ITicketCommentsService
     {
         Task<List<TicketCommentResponseDTO>> GetAllTicketCommentAsync();
         Task<TicketCommentResponseDTO> GetTicketCommentByIdAsync(int id);
