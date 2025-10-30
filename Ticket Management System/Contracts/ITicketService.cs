@@ -3,20 +3,60 @@ using Ticket_Management_System.DTOs.TicketDTO;
 
 namespace Ticket_Management_System.Contracts
 {
+    /// <summary>
+    /// Defines the contract for managing tickets including creation, update, retrieval, and deletion.
+    /// </summary>
     public interface ITicketService
     {
-        // GET /api/tickets/{id} (Get Ticket by Id)
+        /// <summary>
+        /// Retrieves a specific ticket by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the ticket to retrieve.</param>
+        /// <returns>
+        /// A <see cref="TicketGetIdResponseDTO"/> representing the ticket details if found; otherwise, null.
+        /// </returns>
         Task<TicketGetIdResponseDTO> GetTicketByIdAsync(int id);
-        // POST /api/tickets (Create a new Ticket)
+
+        /// <summary>
+        /// Creates a new ticket with the provided details.
+        /// </summary>
+        /// <param name="ticketRequestDTO">The ticket data required to create a new record.</param>
+        /// <returns>
+        /// A <see cref="TicketInsertResponseDTO"/> containing the created ticket information.
+        /// </returns>
         Task<TicketInsertResponseDTO> CreateTicketAsync(TicketInsertRequestDTO ticketRequestDTO);
-        // GET /api/tickets (Get all Tickets)
+
+        /// <summary>
+        /// Retrieves all tickets available in the system.
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="TicketGetIdResponseDTO"/> objects representing all tickets.
+        /// </returns>
         Task<List<TicketGetIdResponseDTO>> GetAllTicketsAsync();
-        // UPDATE /api/tickets/{id} (Update Ticket by Id)
+
+        /// <summary>
+        /// Updates an existing ticket using its unique identifier.
+        /// </summary>
+        /// <param name="id">The ID of the ticket to update.</param>
+        /// <param name="ticketUpdateRequestDTO">The updated ticket data.</param>
+        /// <returns>
+        /// A <see cref="TicketUpdateResponeDTO"/> containing the updated ticket information.
+        /// </returns>
         Task<TicketUpdateResponeDTO> UpdateTicketAsync(int id, TicketUpdateRequestDTO ticketUpdateRequestDTO);
-        // DELETE /api/tickets/{id} (Delete Ticket by Id)
+
+        /// <summary>
+        /// Deletes a ticket by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the ticket to delete.</param>
+        /// <returns>
+        /// A confirmation message indicating whether the delete operation was successful.
+        /// </returns>
         Task<string> DeleteTicketAsync(int id);
 
-        // Save Changes DB
+        /// <summary>
+        /// Saves pending changes to the database.
+        /// </summary>
+        /// <returns>A task representing the asynchronous save operation.</returns>
         Task SaveChangesAsync();
     }
 }
