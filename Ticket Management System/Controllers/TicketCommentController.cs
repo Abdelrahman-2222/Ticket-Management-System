@@ -68,7 +68,7 @@ namespace Ticket_Management_System.Controllers
         public async Task<ActionResult<TicketCommentResponseDTO>> UpdateTicketComment(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
             var updatedTicketComment = await _ticketCommentService.UpdateTicketCommentAsync(id, ticketCommentRequestDTO);
-            
+
             if (updatedTicketComment == null)
             {
                 return NotFound();
@@ -79,7 +79,7 @@ namespace Ticket_Management_System.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicketComment(int id)
+        public async Task<ActionResult<string>> DeleteTicketComment(int id)
         {
             var result = await _ticketCommentService.DeleteTicketCommentAsync(id);
 
@@ -88,8 +88,18 @@ namespace Ticket_Management_System.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok(result);
         }
 
+        [HttpGet("ticket/{ticketId}")]
+        public async Task<ActionResult<List<TicketCommentResponseDTO>>> GetCommentsByTicketId(int ticketId)
+        {
+            var ticketComments = await _ticketCommentService.GetCommentsByTicketIdAsync(ticketId);
+            if (ticketComments == null || !ticketComments.Any())
+            {
+                return NotFound();
+            }
+            return Ok(ticketComments);
+        }
     }
 }

@@ -55,10 +55,7 @@ namespace Ticket_Management_System.Services
                 Department = new DepartmentResponseDTO
                 {
                      Id = newEmployee.DepartmentId,
-                    Name = _context.Departments
-                            .Where(D => D.Id == newEmployee.DepartmentId)
-                            .Select(D => D.Name)
-                            .FirstOrDefault()
+                     Name = _context.Departments.SingleOrDefaultAsync(d => d.Id == newEmployee.DepartmentId).Result.Name
                 }
             };
         }

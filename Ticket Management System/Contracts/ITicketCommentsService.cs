@@ -8,6 +8,8 @@ namespace Ticket_Management_System.Contracts
         Task<TicketCommentResponseDTO> GetTicketCommentByIdAsync(int id);
         Task<TicketCommentResponseDTO> CreateTicketCommentAsync(TicketCommentRequestDTO ticketCommentRequestDTO);
         Task<TicketCommentResponseDTO> UpdateTicketCommentAsync(int id, TicketCommentRequestDTO ticketCommentRequestDTO);
+        // Get All Comments related to a specific Ticket
+        Task<List<TicketCommentResponseDTO>> GetCommentsByTicketIdAsync(int ticketId);
         Task<string> DeleteTicketCommentAsync(int id);
         Task SaveChangesAsync();
     }

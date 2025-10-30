@@ -4,6 +4,6 @@
     {
         public string ChangeDescription { get; set; }
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
-        public string TicketName { get; set; }
+        public int TicketId { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.SupportAgentDTO;
 using Ticket_Management_System.DTOs.TicketCategoryDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
+using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
@@ -73,7 +74,7 @@ namespace Ticket_Management_System.Services
                         Name = T.Category != null ? T.Category.Name : null
                     }
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync(i=> i.Id == id);
 
             return ticket;
         }
@@ -231,6 +232,15 @@ namespace Ticket_Management_System.Services
                     {
                         Id = T.Category != null ? T.Category.Id : 0,
                         Name = T.Category != null ? T.Category.Name : null
+                    },
+                    TicketHistory = new TicketHistoryGetForTickets
+                    {
+                        HistoryLogs = T.HistoryLogs.Select(th => new TicketHistoryDTO
+                        {
+                            Id = th.Id,
+                            ChangeDescription = th.ChangeDescription,
+                            Timestamp = th.Timestamp
+                        }).ToList()
                     }
                 }).ToListAsync();
 
