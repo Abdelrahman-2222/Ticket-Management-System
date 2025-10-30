@@ -71,6 +71,20 @@ namespace Ticket_Management_System.Controllers
 
             return Ok(ticketPrioritys);
         }
+        /// <summary>
+        /// Retrieves single ticket priorities with id with ticket details.
+        /// </summary>
+        /// <returns>A list of <see cref="TicketPriorityAllDetailsResponseDTO"/>.</returns>
+        [HttpGet("ticketDetaisl/ticketPriority{id}")]
+        public async Task<ActionResult<TicketPriorityAllDetailsResponseDTO>> GetTicketPriorityByTicketDetailsId(int id)
+        {
+            var ticketPriority = await _ticketPriorityService.GetAllTicketPriorityDetailsByIdAsync(id);
+            if (ticketPriority == null)
+            {
+                return NotFound();
+            }
+            return Ok(ticketPriority);
+        }
 
         /// <summary>
         /// Updates an existing ticket priority.

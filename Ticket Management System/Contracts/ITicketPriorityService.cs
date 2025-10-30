@@ -22,6 +22,13 @@ namespace Ticket_Management_System.Contracts
         Task<TicketPriorityResponseDTO> GetTicketPriorityByIdAsync(int id);
 
         /// <summary>
+        /// Retrieves all ticket priorities with details of ticket.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="TicketPriorityAllDetailsResponseDTO"/>.</returns>
+        Task<TicketPriorityAllDetailsResponseDTO> GetAllTicketPriorityDetailsByIdAsync(int id);
+
+
+        /// <summary>
         /// Retrieves all ticket priorities.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="TicketPriorityResponseDTO"/>.</returns>

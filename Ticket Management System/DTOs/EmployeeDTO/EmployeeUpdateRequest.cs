@@ -1,15 +1,10 @@
 ﻿namespace Ticket_Management_System.DTOs.EmployeeDTO
 {
     /// <summary>
-    /// Represents the response data transfer object for retrieving employee information.
+    /// Represents a request to update an employee's information.
     /// </summary>
-    public class EmployeeGetResponseDTO
+    public class EmployeeUpdateRequest
     {
-        /// <summary>
-        /// Gets or sets the unique identifier of the employee.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or sets the name of the employee.
         /// </summary>

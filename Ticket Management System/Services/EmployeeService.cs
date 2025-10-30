@@ -3,28 +3,43 @@ using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.EmployeeDTO;
-using Ticket_Management_System.DTOs.SupportAgentDTO;
-using Ticket_Management_System.DTOs.TicketCategoryDTO;
-using Ticket_Management_System.DTOs.TicketDTO;
-using Ticket_Management_System.DTOs.TicketPriorityDTO;
-using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Services
 {
+    /// <summary>
+    /// Provides services for managing employees, including creation, retrieval, update, and deletion.
+    /// </summary>
     public class EmployeeService : IEmployeeService
     {
         private readonly TicketContext _context;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmployeeService"/> class.
+        /// </summary>
+        /// <param name="context">The database context to use for employee operations.</param>
         public EmployeeService(TicketContext context)
         {
             _context = context;
         }
+
+        /// <summary>
+        /// Persists all changes made in this context to the database asynchronously.
+        /// </summary>
+        /// <returns>A task representing the asynchronous save operation.</returns>
         public async Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<EmployeeResponseDTO> CreateEmployeeAsync(EmployeeRequestDTO employeeRequestDTO)
+        /// <summary>
+        /// Creates a new employee and assigns them to a department.
+        /// </summary>
+        /// <param name="employeeRequestDTO">The employee creation request DTO.</param>
+        /// <returns>The created employee with department information.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="employeeRequestDTO"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown if required fields are missing.</exception>
+        public async Task<EmployeeDeptResponeDTO> CreateEmployeeAsync(EmployeeCreateAssignDepartmentDTO employeeRequestDTO)
         {
             if (employeeRequestDTO == null)
                 throw new ArgumentNullException(nameof(employeeRequestDTO));
@@ -35,7 +50,6 @@ namespace Ticket_Management_System.Services
             if (string.IsNullOrWhiteSpace(employeeRequestDTO.Email))
                 throw new ArgumentException("Email is required.", nameof(employeeRequestDTO.Email));
 
-
             var newEmployee = new Employee
             {
                 Name = employeeRequestDTO.Name.Trim(),
@@ -43,67 +57,76 @@ namespace Ticket_Management_System.Services
                 DepartmentId = employeeRequestDTO.Department.Id,
             };
 
-            _context.Employees.Add(newEmployee);
+            await _context.Employees.AddAsync(newEmployee);
             await _context.SaveChangesAsync();
 
-
-            return new EmployeeResponseDTO
+            return new EmployeeDeptResponeDTO
             {
                 Id = newEmployee.Id,
                 Name = newEmployee.Name,
                 Email = newEmployee.Email,
-                Department = new DepartmentResponseDTO
+                Department = new DepartmentGetResponseDTO
                 {
-                     Id = newEmployee.DepartmentId,
-                     Name = _context.Departments.SingleOrDefaultAsync(d => d.Id == newEmployee.DepartmentId).Result.Name
+                    Id = newEmployee.DepartmentId,
+                    Name = newEmployee.DepartmentId != 0 ? (await _context.Departments.FindAsync(newEmployee.DepartmentId))?.Name ?? string.Empty : string.Empty
                 }
             };
         }
 
-        public async Task<EmployeeResponseDTO> GetEmployeeByIdAsync(int id)
+        /// <summary>
+        /// Retrieves an employee by their unique identifier.
+        /// </summary>
+        /// <param name="id">The employee's unique identifier.</param>
+        /// <returns>The employee with department information, or null if not found.</returns>
+        public async Task<EmployeeDeptResponeDTO> GetEmployeeByIdAsync(int id)
         {
             var employee = await _context.Employees
-                .Select(E => new EmployeeResponseDTO
+                .Select(E => new EmployeeDeptResponeDTO
                 {
                     Id = E.Id,
                     Name = E.Name,
                     Email = E.Email,
-                    Department = new DepartmentResponseDTO
+                    Department = new DepartmentGetResponseDTO
                     {
                         Id = E.DepartmentId,
-                        Name = _context.Departments
-                            .Where(D => D.Id == E.DepartmentId)
-                            .Select(D => D.Name)
-                            .FirstOrDefault()
+                        Name = E.Department != null ? E.Department.Name : string.Empty
                     }
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync(EID => EID.Id == id);
 
             return employee;
         }
 
-        public async Task<List<EmployeeResponseDTO>> GetAllEmployeesAsync()
+        /// <summary>
+        /// Retrieves all employees with their department information.
+        /// </summary>
+        /// <returns>A list of employees with department details.</returns>
+        public async Task<List<EmployeeDeptResponeDTO>> GetAllEmployeesAsync()
         {
             var employees = await _context.Employees
-                .Select(E => new EmployeeResponseDTO
+                .Select(E => new EmployeeDeptResponeDTO
                 {
                     Id = E.Id,
                     Name = E.Name,
                     Email = E.Email,
-                    Department = new DepartmentResponseDTO
+                    Department = new DepartmentGetResponseDTO
                     {
                         Id = E.DepartmentId,
-                        Name = _context.Departments
-                            .Where(D => D.Id == E.DepartmentId)
-                            .Select(D => D.Name)
-                            .FirstOrDefault()
+                        Name = E.Department != null ? E.Department.Name : string.Empty
                     }
                 }).ToListAsync();
 
             return employees;
         }
 
-        public async Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, EmployeeRequestDTO employeeRequestDTO)
+        /// <summary>
+        /// Updates an existing employee's information.
+        /// </summary>
+        /// <param name="id">The unique identifier of the employee to update.</param>
+        /// <param name="employeeRequestDTO">The updated employee data.</param>
+        /// <returns>The updated employee with department information.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the employee is not found.</exception>
+        public async Task<EmployeeDeptResponeDTO> UpdateEmployeeAsync(int id, EmployeeUpdateRequest employeeRequestDTO)
         {
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
@@ -112,25 +135,29 @@ namespace Ticket_Management_System.Services
             }
             employee.Name = employeeRequestDTO.Name;
             employee.Email = employeeRequestDTO.Email;
-            _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
-            var responseDTO = new EmployeeResponseDTO
-            {
-                Id = employee.Id,
-                Name = employee.Name,
-                Email = employee.Email,
-                Department = new DepartmentResponseDTO
+            var responseDTO = await _context.Employees
+                .Select(e => new EmployeeDeptResponeDTO
                 {
-                    Id = employee.DepartmentId,
-                    Name = _context.Departments
-                            .Where(D => D.Id == employee.DepartmentId)
-                            .Select(D => D.Name)
-                            .FirstOrDefault()
-                }
-            };
+                    Id = e.Id,
+                    Name = e.Name,
+                    Email = e.Email,
+                    Department = new DepartmentGetResponseDTO
+                    {
+                        Id = e.Department.Id,
+                        Name = e.Department.Name
+                    }
+                })
+                .SingleOrDefaultAsync(e => e.Id == id);
             return responseDTO;
         }
 
+        /// <summary>
+        /// Deletes an employee by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the employee to delete.</param>
+        /// <returns>A message indicating successful deletion.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the employee is not found.</exception>
         public async Task<string> DeleteEmployeeAsync(int id)
         {
             var employeeTobeDeleted = await _context.Employees.FindAsync(id);
@@ -144,6 +171,5 @@ namespace Ticket_Management_System.Services
 
             return $"Employee with ID {id} deleted successfully.";
         }
-
     }
 }
