@@ -130,5 +130,19 @@ namespace Ticket_Management_System.Services
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<TicketCommentResponseDTO>> GetCommentsByTicketIdAsync(int ticketId)
+        {
+            var comments = await _context.TicketComments
+                .Where(tc => tc.TicketId == ticketId)
+                .Select(tc => new TicketCommentResponseDTO
+                {
+                    Id = tc.Id,
+                    Content = tc.Content,
+                    AuthorName = tc.AuthorName,
+                    TicketName = tc.Ticket.Name,
+                }).ToListAsync();
+            return comments;
+        }
     }
 }
