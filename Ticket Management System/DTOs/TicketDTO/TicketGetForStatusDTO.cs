@@ -1,13 +1,10 @@
-﻿using Ticket_Management_System.Models;
-
-namespace Ticket_Management_System.DTOs.TicketDTO
+﻿namespace Ticket_Management_System.DTOs.TicketDTO
 {
-    public class TicketInsertResponseDTO
+    public class TicketGetForStatusDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTimeOffset? SubmittedAt { get; set; }
-        public string SupportAgentName { get; set; }
     }
 }
