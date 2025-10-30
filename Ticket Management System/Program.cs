@@ -33,7 +33,7 @@ namespace Ticket_Management_System
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<ISupportAgentService, SupportAgentService>();
             builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
-            builder.Services.AddScoped<ITicketCommandsService, TicketCommandsService>();
+            builder.Services.AddScoped<ITicketCommentsService, TicketCommentsService>();
             builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
             builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
             builder.Services.AddScoped<ITicketService, TicketService>();
