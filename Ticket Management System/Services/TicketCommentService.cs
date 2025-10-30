@@ -2,7 +2,7 @@
 
 namespace Ticket_Management_System.Services
 {
-    public class TicketCommandsService : ITicketCommandsService
+    public class TicketCommentService : ITicketCommandsService
     {
     }
 }
