@@ -68,18 +68,76 @@ namespace Ticket_Management_System.Services
         /// <param name="id">Ticket history ID</param>
         /// <param name="ticketHistoryUpdateRequestDTO">Updated ticket history data</param>
         /// <returns>Returns updated ticket history details</returns>
-        public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
+        //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
+        //{
+        //    var ticketHistory = await _context.TicketHistories.FindAsync(id);
+        //    if (ticketHistory == null)
+        //        return null!;
+
+        //    ticketHistory.ChangeDescription = ticketHistoryUpdateRequestDTO.ChangeDescription;
+        //    ticketHistory.Timestamp = ticketHistoryUpdateRequestDTO.Timestamp;
+
+        //    await _context.SaveChangesAsync();
+
+        //    var updatedTicketHistory = await _context.TicketHistories
+        //        .Select(e => new TicketHistoryResponseGetByIdDTO
+        //        {
+        //            Id = e.Id,
+        //            ChangeDescription = e.ChangeDescription,
+        //            Timestamp = e.Timestamp,
+        //            TicketName = e.Ticket != null ? e.Ticket.Name : string.Empty
+        //        })
+        //        .SingleOrDefaultAsync(e => e.Id == id);
+
+        //    return updatedTicketHistory!;
+        //}
+        //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
+        //{
+        //    // STEP 1: Update directly in the DB — no entity tracking
+        //    await _context.TicketHistories
+        //        .Where(e => e.Id == id)
+        //        .ExecuteUpdateAsync(s => s
+        //            .SetProperty(e => e.ChangeDescription, ticketHistoryUpdateRequestDTO.ChangeDescription)
+        //            .SetProperty(e => e.Timestamp, ticketHistoryUpdateRequestDTO.Timestamp)
+        //        );
+
+        //    // STEP 2: Immediately project the updated data (with related Ticket info)
+        //    var updatedTicketHistory = await _context.TicketHistories
+        //        .Where(e => e.Id == id)
+        //        .Select(e => new TicketHistoryResponseGetByIdDTO
+        //        {
+        //            Id = e.Id,
+        //            ChangeDescription = e.ChangeDescription,
+        //            Timestamp = e.Timestamp,
+        //            TicketName = e.Ticket != null ? e.Ticket.Name : string.Empty
+        //        })
+        //        .SingleOrDefaultAsync();
+
+        //    return updatedTicketHistory!;
+        //}
+
+        public async Task<TicketHistoryResponseGetByIdDTO?> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO dto)
         {
-            var ticketHistory = await _context.TicketHistories.FindAsync(id);
-            if (ticketHistory == null)
-                return null!;
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
 
-            ticketHistory.ChangeDescription = ticketHistoryUpdateRequestDTO.ChangeDescription;
-            ticketHistory.Timestamp = ticketHistoryUpdateRequestDTO.Timestamp;
+            if (string.IsNullOrWhiteSpace(dto.ChangeDescription))
+                throw new ArgumentException("ChangeDescription is required.", nameof(dto.ChangeDescription));
 
-            await _context.SaveChangesAsync();
+            var affected = await _context.TicketHistories
+                .Where(e => e.Id == id)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(e => e.ChangeDescription, dto.ChangeDescription)
+                    .SetProperty(e => e.Timestamp, dto.Timestamp)
+                );
+
+            if (affected == 0)
+            {
+                return null; 
+            }
 
             var updatedTicketHistory = await _context.TicketHistories
+                .Where(e => e.Id == id)
                 .Select(e => new TicketHistoryResponseGetByIdDTO
                 {
                     Id = e.Id,
@@ -87,10 +145,11 @@ namespace Ticket_Management_System.Services
                     Timestamp = e.Timestamp,
                     TicketName = e.Ticket != null ? e.Ticket.Name : string.Empty
                 })
-                .SingleOrDefaultAsync(e => e.Id == id);
+                .SingleOrDefaultAsync(); 
 
-            return updatedTicketHistory!;
+            return updatedTicketHistory;
         }
+
 
         /// <summary>
         /// Deletes ticket history by ID.

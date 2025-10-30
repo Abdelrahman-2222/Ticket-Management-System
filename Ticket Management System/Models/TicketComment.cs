@@ -8,16 +8,11 @@ namespace Ticket_Management_System.Models
     /// Represents a comment left on a support <see cref="Ticket"/>.
     /// </summary>
     /// <remarks>
-    /// Implements <see cref="IBaseId"/> and belongs to a single <see cref="Ticket"/>.
+    /// Implements <see cref="EntityBase"/> and belongs to a single <see cref="Ticket"/>.
     /// Used to capture discussion and updates related to the ticket.
     /// </remarks>
-    public class TicketComment : IBaseId
+    public class TicketComment : EntityBase
     {
-        /// <summary>
-        /// Gets or sets the unique identifier for the ticket comment.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or sets the textual content of the comment.
         /// </summary>
