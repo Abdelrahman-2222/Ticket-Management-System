@@ -82,7 +82,7 @@ namespace Ticket_Management_System.Services
             {
                 ChangeDescription = ticketHistoryInsertRequestDTO.ChangeDescription,
                 Timestamp = ticketHistoryInsertRequestDTO.Timestamp,
-                Ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Name == ticketHistoryInsertRequestDTO.TicketName)
+                Ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketHistoryInsertRequestDTO.TicketId)
             };
             _context.TicketHistories.Add(newTicketHistory);
             await _context.SaveChangesAsync();

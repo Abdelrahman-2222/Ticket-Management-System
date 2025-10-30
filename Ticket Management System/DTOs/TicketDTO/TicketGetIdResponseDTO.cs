@@ -1,6 +1,7 @@
 ﻿using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.SupportAgentDTO;
 using Ticket_Management_System.DTOs.TicketCategoryDTO;
+using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
@@ -19,5 +20,6 @@ namespace Ticket_Management_System.DTOs.TicketDTO
         public TicketStatusResponseDTO TicketStatus { get; set; }
         public TicketPriorityResponseDTO TicketPriority { get; set; }
         public TicketCategoryResponseDTO TicketCategory { get; set; }
+        public TicketHistoryGetForTickets TicketHistory { get; set; }
     }
 }
