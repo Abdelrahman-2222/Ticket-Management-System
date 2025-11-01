@@ -69,10 +69,6 @@ namespace Ticket_Management_System.Services
         /// <param name="ticketHistoryUpdateRequestDTO">Updated ticket history data</param>
         /// <returns>Returns updated ticket history details</returns>
         //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
-
-        //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
-
-        //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
         //{
         //    var ticketHistory = await _context.TicketHistories.FindAsync(id);
         //    if (ticketHistory == null)
