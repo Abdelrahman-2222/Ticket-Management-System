@@ -4,6 +4,7 @@ using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
@@ -13,7 +14,7 @@ namespace Ticket_Management_System.Services
     /// <remarks>
     /// Uses Entity Framework Core via <see cref="TicketContext"/> and returns DTOs tailored for API responses.
     /// </remarks>
-    public class TicketStatusService : ITicketStatusService
+    public class TicketStatusService : EnsureValid, ITicketStatusService
     {
         private readonly TicketContext _context;
 
@@ -39,6 +40,7 @@ namespace Ticket_Management_System.Services
         /// </exception>
         public async Task<TicketStatusResponeMainDTO> GetTicketStatusByIdAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var ticketStatus = await _context.TicketStatuses.Select(tS => new TicketStatusResponeMainDTO
             {
                 Id = tS.Id,
@@ -50,7 +52,11 @@ namespace Ticket_Management_System.Services
                     Description = t.Description,
                     SubmittedAt = t.SubmittedAt
                 }).ToList()
-            }).SingleAsync(tS => tS.Id == id);
+            }).SingleOrDefaultAsync(tS => tS.Id == id);
+            if(ticketStatus == null)
+            {
+                return null;
+            }
             return ticketStatus;
 
         }
@@ -83,6 +89,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The created status as a <see cref="TicketStatusResponseDTO"/>.</returns>
         public async Task<TicketStatusResponseDTO> CreateTicketStatusAsync(TicketStatusInsertRequestDTO ticketStatusRequestDTO)
         {
+            EnsureValidDTOOnly<TicketStatusInsertRequestDTO>(ticketStatusRequestDTO);
             var newTicketStatus = new TicketStatus
             {
                 Name = ticketStatusRequestDTO.TicketStatusName
@@ -107,6 +114,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketStatusUpdateResponseDTO> UpdateTicketStatusAsync(int id, TicketStatusInsertRequestDTO ticketStatusUpdateRequestDTO)
         {
+            EnsureValidDTOWithID<TicketStatusInsertRequestDTO>(ticketStatusUpdateRequestDTO, id);
             var existingTicketStatus = await _context.TicketStatuses.FindAsync(id);
             if (existingTicketStatus == null)
             {
@@ -140,6 +148,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<string> DeleteTicketStatusAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var existingTicketStatus = await _context.TicketStatuses.FindAsync(id);
             if (existingTicketStatus == null)
             {
