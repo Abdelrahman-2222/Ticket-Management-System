@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.DTOs.TicketCategoryDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 
 namespace Ticket_Management_System.Controllers
 {
@@ -10,7 +11,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketCategoryController : ControllerBase
+    public class TicketCategoryController : BaseController
     {
         /// <summary>
         /// Service used to handle SupportAgent operations and persistence.
@@ -59,11 +60,15 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetTicketCategoryById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) 
+                return validation;
+
             var ticketCategory = await _ticketCategoryService.GetTicketCategoryByIdAsync(id);
 
             if (ticketCategory == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketCategory", id);
             }
 
             return Ok(ticketCategory);
@@ -81,14 +86,15 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateTicketCategory([FromBody] TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTO<TicketCategoryRequestDTO>(ticketCategoryRequestDTO);
+            if (validation != null) 
+                return validation;
 
             var createdTicketCategory = await _ticketCategoryService.CreateTicketCategoryAsync(ticketCategoryRequestDTO);
 
             if(createdTicketCategory == null)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating ticket category.");
             }
 
             return CreatedAtAction(nameof(GetTicketCategoryById), new { id = createdTicketCategory.Id }, createdTicketCategory);
@@ -107,14 +113,15 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateTicketCategory(int id, [FromBody] TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTOWithId<TicketCategoryRequestDTO>(ticketCategoryRequestDTO, id);
+            if (validation != null) 
+                return validation;
 
             var updatedTicketCategory = await _ticketCategoryService.UpdateTicketCategoryAsync(id, ticketCategoryRequestDTO);
 
             if (updatedTicketCategory == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketCategory", id);
             }
 
             return Ok(updatedTicketCategory);
@@ -130,11 +137,14 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTicketCategory(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) 
+                return validation;
             var result = await _ticketCategoryService.DeleteTicketCategoryAsync(id);
 
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketCategory", id);
             }
 
             return Ok(result);

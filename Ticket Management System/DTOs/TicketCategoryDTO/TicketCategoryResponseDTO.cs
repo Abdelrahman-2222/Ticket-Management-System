@@ -1,4 +1,5 @@
 ﻿using Ticket_Management_System.DTOs.TicketDTO;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketCategoryDTO
 {
@@ -11,11 +12,13 @@ namespace Ticket_Management_System.DTOs.TicketCategoryDTO
         /// <summary>
         /// Gets or sets the unique identifier of the ticket category.
         /// </summary>
+        [RequiredField("Id is required.")]
         public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the ticket category.
         /// </summary>
+        [RequiredField("Name is required.")]
         public string Name { get; set; }
 
         /// <summary>

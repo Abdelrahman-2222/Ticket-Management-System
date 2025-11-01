@@ -4,6 +4,7 @@ using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.SupportAgentDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
@@ -11,7 +12,7 @@ namespace Ticket_Management_System.Services
     /// Service class responsible for managing Support Agent operations,
     /// including retrieving, creating, updating, and deleting support agents.
     /// </summary>
-    public class SupportAgentService : ISupportAgentService
+    public class SupportAgentService : EnsureValid, ISupportAgentService
     {
         private readonly TicketContext _context;
 
@@ -61,6 +62,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> GetSupportAgentByIdAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var supportAgent = await _context.SupportAgents
                 .Select(sa => new SupportAgentGetByIdResponseDTO
                 {
@@ -95,6 +97,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> CreateSupportAgentAsync(SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            EnsureValidDTOOnly<SupportAgentRequestDTO>(supportAgentRequestDTO);
             var supportAgent = new SupportAgent
             {
                 Name = supportAgentRequestDTO.Name,
@@ -125,10 +128,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<SupportAgentGetByIdResponseDTO> UpdateSupportAgentAsync(int id, SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            EnsureValidDTOWithID<SupportAgentRequestDTO>(supportAgentRequestDTO, id);
             var supportAgent = _context.SupportAgents.Find(id);
             if (supportAgent == null)
             {
-                throw new KeyNotFoundException($"Support Agent with ID {id} not found.");
+                return null;
             }
 
             supportAgent.Id = id;
@@ -157,10 +161,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<string> DeleteSupportAgentAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var supportAgent = await _context.SupportAgents.FindAsync(id);
             if (supportAgent == null)
             {
-                throw new KeyNotFoundException($"Support Agent with ID {id} not found.");
+                return null;
             }
 
             _context.SupportAgents.Remove(supportAgent);

@@ -1,14 +1,10 @@
 
 using System.Reflection;
-using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
 using Ticket_Management_System.Models;
 using Ticket_Management_System.Services;
-using Ticket_Management_System.Validations.SupportAgentDTOValidations;
-using Ticket_Management_System.Validations.TicketCategoryDTOValidations;
-using Ticket_Management_System.Validations.TicketCommentDTOValidations;
 
 namespace Ticket_Management_System
 {
@@ -43,13 +39,6 @@ namespace Ticket_Management_System
             builder.Services.AddScoped<ITicketService, TicketService>();
             builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
 
-            builder.Services.AddControllers()
-                .AddFluentValidation(config =>
-                {
-                    config.RegisterValidatorsFromAssemblyContaining<SupportAgentValidator>();
-                    config.RegisterValidatorsFromAssemblyContaining<TicketCategoryValidator>();
-                    config.RegisterValidatorsFromAssemblyContaining<TicketCommentValidator>();
-                });
 
             var app = builder.Build();
 

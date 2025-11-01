@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketCategoryDTO
 {
@@ -13,7 +14,7 @@ namespace Ticket_Management_System.DTOs.TicketCategoryDTO
         /// <remarks>
         /// This field is required and must not be empty.
         /// </remarks>
-        [Required]
+        [RequiredField("Name is required.")]
         public string Name { get; set; }
     }
 }

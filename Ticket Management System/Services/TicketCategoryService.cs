@@ -5,6 +5,7 @@ using Ticket_Management_System.DTOs.SupportAgentDTO;
 using Ticket_Management_System.DTOs.TicketCategoryDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
@@ -12,7 +13,7 @@ namespace Ticket_Management_System.Services
     /// Service responsible for managing ticket categories.
     /// Handles CRUD operations and database interactions for <see cref="TicketCategory"/> entities.
     /// </summary>
-    public class TicketCategoryService : ITicketCategoryService
+    public class TicketCategoryService : EnsureValid, ITicketCategoryService
     {
         private readonly TicketContext _context;
 
@@ -63,7 +64,8 @@ namespace Ticket_Management_System.Services
         /// The task result contains the matching <see cref="TicketCategoryResponseDTO"/> if found; otherwise, <c>null</c>.
         /// </returns>
         public async Task<TicketCategoryResponseDTO> GetTicketCategoryByIdAsync(int id)
-        { 
+        {
+            EnsureValidIDOnly(id);
             var ticketCategory = await _context.TicketCategories
                 .Select(sa => new TicketCategoryResponseDTO
                 {
@@ -98,6 +100,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketCategoryResponseDTO> CreateTicketCategoryAsync(TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
+            EnsureValidDTOOnly<TicketCategoryRequestDTO>(ticketCategoryRequestDTO);
             var ticketCategory = new TicketCategory
             {
                 Name = ticketCategoryRequestDTO.Name,
@@ -125,10 +128,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketCategoryResponseDTO> UpdateTicketCategoryAsync(int id, TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
+            EnsureValidDTOWithID<TicketCategoryRequestDTO>(ticketCategoryRequestDTO, id);
             var ticketCategory = await _context.TicketCategories.FindAsync(id);
             if (ticketCategory == null)
             {
-                throw new KeyNotFoundException($"Ticket Category Agent with ID {id} not found.");
+                return null;
             }
 
             ticketCategory.Name = ticketCategoryRequestDTO.Name;
@@ -163,12 +167,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<string> DeleteTicketCategoryAsync(int id)
         {
-
-
+            EnsureValidIDOnly(id);
             var ticketCategory = await _context.TicketCategories.FindAsync(id);
             if (ticketCategory == null)
             {
-                throw new KeyNotFoundException($"Ticket Category Agent with ID {id} not found.");
+                return null;
             }
 
             _context.TicketCategories.Remove(ticketCategory);
