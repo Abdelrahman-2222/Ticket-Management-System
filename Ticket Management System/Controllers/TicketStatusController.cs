@@ -13,7 +13,7 @@ namespace Ticket_Management_System.Controllers
     /// </remarks>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketStatusController : ControllerBase
+    public class TicketStatusController : BaseController
     {
         private readonly ITicketStatusService _ticketStatusService;
 
@@ -39,9 +39,11 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketStatusResponeMainDTO>> GetTicketStatusById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var ticketStatus = await _ticketStatusService.GetTicketStatusByIdAsync(id);
             if (ticketStatus == null)
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             return Ok(ticketStatus);
         }
 
@@ -71,6 +73,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketStatusResponseDTO>> CreateTicketStatus([FromBody] TicketStatusInsertRequestDTO ticketStatusRequestDTO)
         {
+            var validation = ValidateDTO<TicketStatusInsertRequestDTO>(ticketStatusRequestDTO);
+            if (validation != null) return validation;
             var createdTicketStatus = await _ticketStatusService.CreateTicketStatusAsync(ticketStatusRequestDTO);
             return CreatedAtAction(nameof(GetTicketStatusById), new { id = createdTicketStatus.Id }, createdTicketStatus);
         }
@@ -89,9 +93,11 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketStatusUpdateResponseDTO>> UpdateTicketStatus(int id, [FromBody] TicketStatusInsertRequestDTO ticketStatusUpdateRequestDTO)
         {
+            var validation = ValidateDTOWithId<TicketStatusInsertRequestDTO>(ticketStatusUpdateRequestDTO, id);
+            if (validation != null) return validation;
             var updatedTicketStatus = await _ticketStatusService.UpdateTicketStatusAsync(id, ticketStatusUpdateRequestDTO);
             if (updatedTicketStatus == null)
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             return Ok(updatedTicketStatus);
         }
 
@@ -108,9 +114,11 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicketStatus(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var result = await _ticketStatusService.DeleteTicketStatusAsync(id);
             if (result == null)
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             return Ok(result);
         }
     }
