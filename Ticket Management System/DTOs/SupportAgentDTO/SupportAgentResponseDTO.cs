@@ -1,5 +1,6 @@
 ﻿using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.SupportAgentDTO
 {
@@ -12,11 +13,13 @@ namespace Ticket_Management_System.DTOs.SupportAgentDTO
         /// <summary>
         /// Gets or sets the full name of the support agent.
         /// </summary>
+        [RequiredField("Name is required.")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the specialization area of the support agent.
         /// </summary>
+        [RequiredField("Specialization is required.")]
         public string Specialization { get; set; }
 
         /// <summary>

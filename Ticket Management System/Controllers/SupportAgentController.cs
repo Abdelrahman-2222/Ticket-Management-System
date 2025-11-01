@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.DTOs.SupportAgentDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 
 namespace Ticket_Management_System.Controllers
 {
@@ -10,7 +11,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class SupportAgentController : ControllerBase
+    public class SupportAgentController : BaseController
     {
         /// <summary>
         /// Service used to handle SupportAgent operations and persistence.
@@ -61,11 +62,15 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SupportAgentGetByIdResponseDTO>> GetSupportAgentById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) 
+                return validation;
+
             var supportAgent = await _supportAgentService.GetSupportAgentByIdAsync(id);
 
             if (supportAgent == null)
             {
-                return NotFound();
+                return NotFoundResponse("SupportAgent", id);
             }
 
             return Ok(supportAgent);
@@ -82,10 +87,16 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> CreateSupportAgent(SupportAgentRequestDTO supportAgentRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTO<SupportAgentRequestDTO>(supportAgentRequestDTO);
+            if (validation != null) 
+                return validation;
 
             var createdSupportAgent = await _supportAgentService.CreateSupportAgentAsync(supportAgentRequestDTO);
+
+            if (createdSupportAgent == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating Support Agent.");
+            }
 
             return CreatedAtAction(nameof(GetSupportAgentById), new { id = createdSupportAgent.Id }, createdSupportAgent);
         }
@@ -103,14 +114,15 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> UpdateSupportAgent(int id, SupportAgentRequestDTO supportAgentRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTOWithId<SupportAgentRequestDTO>(supportAgentRequestDTO, id);
+            if (validation != null) 
+                return validation;
 
             var updatedSupportAgent = await _supportAgentService.UpdateSupportAgentAsync(id, supportAgentRequestDTO);
 
             if (updatedSupportAgent == null)
             {
-                return NotFound();
+                return NotFoundResponse("SupportAgent", id);
             }
 
             return Ok(updatedSupportAgent);
@@ -127,11 +139,14 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteSupportAgent(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) 
+                return validation;
             var result = await _supportAgentService.DeleteSupportAgentAsync(id);
 
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("SupportAgent", id);
             }
 
             return Ok(result);

@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net.Sockets;
+using Microsoft.EntityFrameworkCore;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.TicketCommentDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
@@ -10,7 +13,7 @@ namespace Ticket_Management_System.Services
     /// Service responsible for managing ticket comments.
     /// Handles creation, retrieval, updating, and deletion of <see cref="TicketComment"/> entities.
     /// </summary>
-    public class TicketCommentsService : ITicketCommentsService
+    public class TicketCommentsService : EnsureValid, ITicketCommentsService
     {
         private readonly TicketContext _context;
 
@@ -57,6 +60,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketCommentResponseDTO> GetTicketCommentByIdAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var ticketComment = await _context.TicketComments
                 .Where(tc => tc.Id == id)
                 .Select(tc => new TicketCommentResponseDTO
@@ -66,6 +70,9 @@ namespace Ticket_Management_System.Services
                     AuthorName = tc.AuthorName,
                     TicketName = tc.Ticket.Name,
                 }).FirstOrDefaultAsync();
+
+            if (ticketComment == null)
+                return null;
 
             return ticketComment;
         }
@@ -82,6 +89,7 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketCommentResponseDTO> CreateTicketCommentAsync(TicketCommentRequestDTO ticketCommentRequestDTO)
         {
+            EnsureValidDTOOnly<TicketCommentRequestDTO>(ticketCommentRequestDTO);
             var ticketName = await _context.Tickets
                 .Where(t => t.Id == ticketCommentRequestDTO.TicketId)
                 .Select(t => t.Name)
@@ -122,10 +130,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<TicketCommentResponseDTO> UpdateTicketCommentAsync(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
+            EnsureValidDTOWithID<TicketCommentRequestDTO>(ticketCommentRequestDTO, id);
             var ticketComment = await _context.TicketComments.FindAsync(id);
 
             if (ticketComment == null)
-                throw new KeyNotFoundException($"Ticket Comment with ID {id} not found.");
+                return null;
 
             ticketComment.Content = ticketCommentRequestDTO.Content;
             ticketComment.AuthorName = ticketCommentRequestDTO.AuthorName;
@@ -161,10 +170,11 @@ namespace Ticket_Management_System.Services
         /// </returns>
         public async Task<string> DeleteTicketCommentAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var ticketComment = await _context.TicketComments.FindAsync(id);
 
             if (ticketComment == null)
-                throw new KeyNotFoundException($"Ticket Comment with ID {id} not found.");
+                return null;
 
             _context.TicketComments.Remove(ticketComment);
 
@@ -185,6 +195,7 @@ namespace Ticket_Management_System.Services
 
         public async Task<List<TicketCommentResponseDTO>> GetCommentsByTicketIdAsync(int ticketId)
         {
+            EnsureValidIDOnly(ticketId);
             var comments = await _context.TicketComments
                 .Where(tc => tc.TicketId == ticketId)
                 .Select(tc => new TicketCommentResponseDTO
@@ -194,6 +205,10 @@ namespace Ticket_Management_System.Services
                     AuthorName = tc.AuthorName,
                     TicketName = tc.Ticket.Name,
                 }).ToListAsync();
+
+            if (comments == null)
+                return null;
+
             return comments;
         }
     }

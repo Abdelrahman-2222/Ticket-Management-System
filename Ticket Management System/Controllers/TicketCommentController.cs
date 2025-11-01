@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.DTOs.TicketCommentDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 
 namespace Ticket_Management_System.Controllers
 {
@@ -9,7 +10,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketCommentController : ControllerBase
+    public class TicketCommentController : BaseController
     {
         /// <summary>
         /// Service used to handle TicketComment operations and persistence.
@@ -58,11 +59,14 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketCommentResponseDTO>> GetTicketCommentById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null)
+                return validation;
             var ticketComment = await _ticketCommentService.GetTicketCommentByIdAsync(id);
 
             if (ticketComment == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketComment", id);
             }
 
             return Ok(ticketComment);
@@ -81,14 +85,15 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketCommentResponseDTO>> CreateTicketComment(TicketCommentRequestDTO ticketCommentRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTO<TicketCommentRequestDTO>(ticketCommentRequestDTO);
+            if (validation != null) 
+                return validation;
 
             var createdTicketComment = await _ticketCommentService.CreateTicketCommentAsync(ticketCommentRequestDTO);
 
             if (createdTicketComment == null)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating ticket comment.");
             }
 
             return CreatedAtAction(nameof(GetTicketCommentById), new { id = createdTicketComment.Id }, createdTicketComment);
@@ -107,14 +112,15 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketCommentResponseDTO>> UpdateTicketComment(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validation = ValidateDTOWithId<TicketCommentRequestDTO>(ticketCommentRequestDTO, id);
+            if (validation != null) 
+                return validation;
 
             var updatedTicketComment = await _ticketCommentService.UpdateTicketCommentAsync(id, ticketCommentRequestDTO);
 
             if (updatedTicketComment == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketComment", id);
             }
 
             return Ok(updatedTicketComment);
@@ -133,11 +139,14 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicketComment(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) 
+                return validation;
             var result = await _ticketCommentService.DeleteTicketCommentAsync(id);
 
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketComment", id);
             }
 
             return Ok(result);
@@ -155,10 +164,14 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("ticket/{ticketId}")]
         public async Task<ActionResult<List<TicketCommentResponseDTO>>> GetCommentsByTicketId(int ticketId)
         {
+            var validation = ValidateId(ticketId);
+            if (validation != null) 
+                return validation;
+
             var ticketComments = await _ticketCommentService.GetCommentsByTicketIdAsync(ticketId);
             if (ticketComments == null || !ticketComments.Any())
             {
-                return NotFound();
+                return NotFoundResponse("TicketComment", ticketId);
             }
             return Ok(ticketComments);
         }

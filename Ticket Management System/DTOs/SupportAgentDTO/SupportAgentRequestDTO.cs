@@ -1,4 +1,6 @@
-﻿namespace Ticket_Management_System.DTOs.SupportAgentDTO
+﻿using Ticket_Management_System.ValidationAbstraction;
+
+namespace Ticket_Management_System.DTOs.SupportAgentDTO
 {
     /// <summary>
     /// Represents a data transfer object (DTO) used for creating or updating 
@@ -9,11 +11,13 @@
         /// <summary>
         /// Gets or sets the full name of the support agent.
         /// </summary>
+        [RequiredField("Name is required.")]
         public string Name { get; set; }
 
         /// <summary>
         /// Sets the specialization area of the support agent.
         /// </summary>
+        [RequiredField("Specialization is required.")]
         public string Specialization { get; set; }
     }
 }
