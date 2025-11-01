@@ -11,7 +11,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketHistoryController : ControllerBase
+    public class TicketHistoryController : BaseController
     {
         private readonly ITicketHistoryService _ticketHistoryService;
 
@@ -31,9 +31,11 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> GetTicketHistoryById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var ticketHistory = await _ticketHistoryService.GetTicketHistoryByIdAsync(id);
             if (ticketHistory == null)
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             return Ok(ticketHistory);
         }
 
@@ -56,34 +58,16 @@ namespace Ticket_Management_System.Controllers
         /// <param name="id">Ticket history ID</param>
         /// <param name="ticketHistoryUpdateRequestDTO">Updated ticket history data</param>
         /// <returns>Updated ticket history record</returns>
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> UpdateTicketHistory(int id, [FromBody] TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
-        //{
-        //    try
-        //    {
-        //        var updatedTicketHistory = await _ticketHistoryService.UpdateTicketHistoryAsync(id, ticketHistoryUpdateRequestDTO);
-
-        //        if (updatedTicketHistory == null)
-        //            return NotFound(new { Message = $"TicketHistory with Id {id} was not found." });
-
-        //        return Ok(updatedTicketHistory);
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        return BadRequest(new { Message = ex.Message });
-        //    }
-        //}
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TicketHistoryResponseGetByIdDTO))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> UpdateTicketHistory(int id, [FromBody] TicketHistoryUpdateRequestDTO dto)
         {
+            var validation = ValidateDTOWithId<TicketHistoryUpdateRequestDTO>(dto, id);
+            if (validation != null) return validation;
             var updatedTicketHistory = await _ticketHistoryService.UpdateTicketHistoryAsync(id, dto);
 
             if (updatedTicketHistory == null)
             {
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             }
 
             return Ok(updatedTicketHistory);
@@ -97,9 +81,11 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicketHistory(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var result = await _ticketHistoryService.DeleteTicketHistoryAsync(id);
             if (result == null)
-                return NotFound();
+                return NotFoundResponse("TicketHistory", id);
             return Ok(result);
         }
 
@@ -111,6 +97,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketHistoryResponseGetByIdDTO>> CreateTicketHistory(TicketHistoryInsertRequestDTO ticketHistoryInsertRequestDTO)
         {
+            var validation = ValidateDTO<TicketHistoryInsertRequestDTO>(ticketHistoryInsertRequestDTO);
+            if (validation != null) return validation;
             var createdTicketHistory = await _ticketHistoryService.CreateTicketHistoryAsync(ticketHistoryInsertRequestDTO);
             if (createdTicketHistory == null)
                 return BadRequest();

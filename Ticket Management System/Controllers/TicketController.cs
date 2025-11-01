@@ -51,11 +51,13 @@ namespace Ticket_Management_System.Controllers
         {
             var validation = ValidateId(id);
             if (validation != null) return validation;
+
             var ticket = await _ticketService.GetTicketByIdAsync(id);
             if (ticket == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket", id);
             }
+
             return Ok(ticket);
         }
 
@@ -88,7 +90,7 @@ namespace Ticket_Management_System.Controllers
             var updatedTicket = await _ticketService.UpdateTicketAsync(id, ticketUpdateRequestDTO);
             if (updatedTicket == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket", id);
             }
             return Ok(updatedTicket);
         }
@@ -106,7 +108,7 @@ namespace Ticket_Management_System.Controllers
             var result = await _ticketService.DeleteTicketAsync(id);
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket", id);
             }
             return Ok(result);
         }
