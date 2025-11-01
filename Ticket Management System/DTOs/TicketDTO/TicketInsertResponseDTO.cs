@@ -36,6 +36,7 @@ namespace Ticket_Management_System.DTOs.TicketDTO
         /// Gets or sets the name of the support agent assigned to the ticket.
         /// If no agent is assigned during creation, this may be null.
         /// </summary>
+        [RequiredField("SupportAgentName is required.")]
         public string SupportAgentName { get; set; }
     }
 }

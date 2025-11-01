@@ -31,7 +31,7 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketInsertResponseDTO>> CreateTicket(TicketInsertRequestDTO ticketRequestDTO)
         {
-            var validation = ValidateDTO(ticketRequestDTO);
+            var validation = ValidateDTO<TicketInsertRequestDTO>(ticketRequestDTO);
             if (validation != null) return validation;
             var createdTicket = await _ticketService.CreateTicketAsync(ticketRequestDTO);
             if (createdTicket == null)
