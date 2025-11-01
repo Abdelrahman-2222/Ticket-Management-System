@@ -10,7 +10,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketController : ControllerBase
+    public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
 
@@ -31,6 +31,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketInsertResponseDTO>> CreateTicket(TicketInsertRequestDTO ticketRequestDTO)
         {
+            var validation = ValidateDTO(ticketRequestDTO);
+            if (validation != null) return validation;
             var createdTicket = await _ticketService.CreateTicketAsync(ticketRequestDTO);
             if (createdTicket == null)
             {
@@ -47,6 +49,8 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketGetIdResponseDTO>> GetTicketById(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var ticket = await _ticketService.GetTicketByIdAsync(id);
             if (ticket == null)
             {
@@ -79,6 +83,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketUpdateResponeDTO>> UpdateTicket(int id, TicketUpdateRequestDTO ticketUpdateRequestDTO)
         {
+            var validation = ValidateDTOWithId<TicketUpdateRequestDTO>(ticketUpdateRequestDTO, id);
+            if (validation != null) return validation;
             var updatedTicket = await _ticketService.UpdateTicketAsync(id, ticketUpdateRequestDTO);
             if (updatedTicket == null)
             {
@@ -95,6 +101,8 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicket(int id)
         {
+            var validation = ValidateId(id);
+            if (validation != null) return validation;
             var result = await _ticketService.DeleteTicketAsync(id);
             if (result == null)
             {
