@@ -11,7 +11,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController : BaseController
     {
         private readonly IEmployeeService _employeeService;
 
@@ -32,6 +32,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<EmployeeResponseDTO>> CreateEmployee(EmployeeCreateAssignDepartmentDTO employeeRequestDTO)
         {
+            var validationResult = ValidateModel(employeeRequestDTO);
+            if (validationResult != null) return validationResult;
             var createdEmployee = await _employeeService.CreateEmployeeAsync(employeeRequestDTO);
             if (createdEmployee == null)
             {

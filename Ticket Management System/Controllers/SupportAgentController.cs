@@ -4,6 +4,10 @@ using Ticket_Management_System.DTOs.SupportAgentDTO;
 
 namespace Ticket_Management_System.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling operations related to support agents,
+    /// including retrieval, creation, updating, and deletion.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SupportAgentController : ControllerBase
@@ -23,10 +27,20 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all support agents along with their associated tickets.
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="SupportAgentResponseDTO"/> objects containing details of all support agents.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult<List<SupportAgentResponseDTO>>> GetAllSupportAgents()
         {
             var supportAgents = await _supportAgentService.GetAllSupportAgentsAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            //if (supportAgents.)
+            //    return BadRequest(ModelState);
 
             if (supportAgents == null)
             {
@@ -37,6 +51,13 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves a specific support agent by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent.</param>
+        /// <returns>
+        /// A <see cref="SupportAgentGetByIdResponseDTO"/> object containing the details of the requested support agent.
+        /// </returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<SupportAgentGetByIdResponseDTO>> GetSupportAgentById(int id)
         {
@@ -51,18 +72,40 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Creates a new support agent.
+        /// </summary>
+        /// <param name="supportAgentRequestDTO">The support agent data to be created.</param>
+        /// <returns>
+        /// A newly created <see cref="SupportAgentGetAllResponseDTO"/> object.
+        /// </returns>
         [HttpPost]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> CreateSupportAgent(SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var createdSupportAgent = await _supportAgentService.CreateSupportAgentAsync(supportAgentRequestDTO);
 
             return CreatedAtAction(nameof(GetSupportAgentById), new { id = createdSupportAgent.Id }, createdSupportAgent);
         }
 
 
+
+        /// <summary>
+        /// Updates an existing support agent’s information.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent to update.</param>
+        /// <param name="supportAgentRequestDTO">The updated support agent data.</param>
+        /// <returns>
+        /// The updated <see cref="SupportAgentGetAllResponseDTO"/> object.
+        /// </returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> UpdateSupportAgent(int id, SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var updatedSupportAgent = await _supportAgentService.UpdateSupportAgentAsync(id, supportAgentRequestDTO);
 
             if (updatedSupportAgent == null)
@@ -74,6 +117,13 @@ namespace Ticket_Management_System.Controllers
         }
 
 
+        /// <summary>
+        /// Deletes a support agent by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the support agent to delete.</param>
+        /// <returns>
+        /// A confirmation message indicating successful deletion.
+        /// </returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteSupportAgent(int id)
         {

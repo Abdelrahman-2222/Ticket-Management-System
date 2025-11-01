@@ -8,24 +8,11 @@ namespace Ticket_Management_System.Models
     /// Represents an employee within the organization.
     /// </summary>
     /// <remarks>
-    /// Implements <see cref="IBaseId"/> and <see cref="IBaseName"/> to provide common identity and naming.
+    /// Implements <see cref="EntityBase"/> and <see cref="NamedEntityBase"/> to provide common identity and naming.
     /// Employees can submit tickets and belong to a single <see cref="Department"/>.
     /// </remarks>
-    public class Employee : IBaseId, IBaseName
+    public class Employee : NamedEntityBase
     {
-        /// <summary>
-        /// Gets or sets the unique identifier for the employee.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the employee name.
-        /// </summary>
-        /// <remarks>
-        /// The length is constrained by <see cref="AnnotationSettings.NameMinLength"/> and <see cref="AnnotationSettings.NameMaxLength"/>.
-        /// </remarks>
-        [MinLength(AnnotationSettings.NameMinLength), MaxLength(AnnotationSettings.NameMaxLength)]
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the employee email address.

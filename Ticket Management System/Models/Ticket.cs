@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Ticket_Management_System.AppAnnotation;
 using Ticket_Management_System.Models.Base;
 
@@ -9,25 +10,26 @@ namespace Ticket_Management_System.Models
     /// Represents a support ticket submitted by an <see cref="Employee"/> and optionally handled by a <see cref="SupportAgent"/>.
     /// </summary>
     /// <remarks>
-    /// Implements <see cref="IBaseId"/> and <see cref="IBaseName"/> and includes relationships to status, priority, and category,
+    /// Implements <see cref="EntityBase"/> and <see cref="NamedEntityBase"/> and includes relationships to status, priority, and category,
     /// as well as collections of comments and history logs.
     /// </remarks>
-    public class Ticket : IBaseId, IBaseName
+    public class Ticket : NamedEntityBase
     {
-        /// <summary>
-        /// Gets or sets the unique identifier for the ticket.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or sets the title of the ticket.
         /// </summary>
         /// <remarks>
         /// Constrained by <see cref="AnnotationSettings.NameMinLength"/> and <see cref="AnnotationSettings.NameMaxLength"/>.
         /// </remarks>
-        [DisplayName("Title")]
         [MinLength(AnnotationSettings.NameMinLength), MaxLength(AnnotationSettings.NameMaxLength)]
-        public string Name { get; set; }
+        public string Title { get; set; }
+
+        [NotMapped]
+        public override string Name
+        {
+            get => Title;
+            set => Title = value;
+        }
 
         /// <summary>
         /// Gets or sets the detailed description of the reported issue.

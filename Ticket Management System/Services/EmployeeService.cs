@@ -4,6 +4,7 @@ using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.Services
 {
@@ -41,15 +42,9 @@ namespace Ticket_Management_System.Services
         /// <exception cref="ArgumentException">Thrown if required fields are missing.</exception>
         public async Task<EmployeeDeptResponeDTO> CreateEmployeeAsync(EmployeeCreateAssignDepartmentDTO employeeRequestDTO)
         {
-            if (employeeRequestDTO == null)
-                throw new ArgumentNullException(nameof(employeeRequestDTO));
-
-            if (string.IsNullOrWhiteSpace(employeeRequestDTO.Name))
-                throw new ArgumentException("Name is required.", nameof(employeeRequestDTO.Name));
-
-            if (string.IsNullOrWhiteSpace(employeeRequestDTO.Email))
-                throw new ArgumentException("Email is required.", nameof(employeeRequestDTO.Email));
-
+            var result = GenericValidator.Validate(employeeRequestDTO);
+            if (!result.IsValid)
+                throw new ArgumentException(result.ErrorMessage);
             var newEmployee = new Employee
             {
                 Name = employeeRequestDTO.Name.Trim(),
