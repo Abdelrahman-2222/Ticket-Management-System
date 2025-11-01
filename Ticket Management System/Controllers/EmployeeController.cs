@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ticket_Management_System.Contracts;
+using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
+using Ticket_Management_System.Models;
 using Ticket_Management_System.Services;
 
 namespace Ticket_Management_System.Controllers
@@ -41,11 +43,11 @@ namespace Ticket_Management_System.Controllers
                 : CreatedAtAction(nameof(CreateEmployee), new { id = employee.Id }, employee);
         }
 
-        ///// <summary>
-        ///// Retrieves an employee by their unique identifier.
-        ///// </summary>
-        ///// <param name="id">The unique identifier of the employee.</param>
-        ///// <returns>The employee with department details if found; otherwise, NotFound.</returns>
+        /// <summary>
+        /// Retrieves an employee by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the employee.</param>
+        /// <returns>The employee with department details if found; otherwise, NotFound.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<EmployeeResponseDTO>> GetEmployeeById(int id)
         {
@@ -54,15 +56,15 @@ namespace Ticket_Management_System.Controllers
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
             if (employee == null)
             {
-                return NotFound();
+                return NotFoundResponse("Employee", id);
             }
             return Ok(employee);
         }
 
-        ///// <summary>
-        ///// Retrieves all employees with their department details.
-        ///// </summary>
-        ///// <returns>A list of all employees and their departments.</returns>
+        /// <summary>
+        /// Retrieves all employees with their department details.
+        /// </summary>
+        /// <returns>A list of all employees and their departments.</returns>
         [HttpGet]
         public async Task<ActionResult<List<EmployeeResponseDTO>>> GetAllEmployees()
         {
@@ -74,30 +76,30 @@ namespace Ticket_Management_System.Controllers
             return Ok(employees);
         }
 
-        ///// <summary>
-        ///// Updates the details of an existing employee.
-        ///// </summary>
-        ///// <param name="id">The unique identifier of the employee to update.</param>
-        ///// <param name="employeeRequestDTO">The updated employee data.</param>
-        ///// <returns>The updated employee with department details if found; otherwise, NotFound.</returns>
+        /// <summary>
+        /// Updates the details of an existing employee.
+        /// </summary>
+        /// <param name="id">The unique identifier of the employee to update.</param>
+        /// <param name="employeeRequestDTO">The updated employee data.</param>
+        /// <returns>The updated employee with department details if found; otherwise, NotFound.</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<EmployeeResponseDTO>> UpdateEmployee(int id, EmployeeUpdateRequest employeeRequestDTO)
         {
-            var validationResult = ValidateDTOWithId(employeeRequestDTO, id);
+            var validationResult = ValidateDTOWithId<EmployeeUpdateRequest>(employeeRequestDTO, id);
             if (validationResult != null) return validationResult;
             var updatedEmployee = await _employeeService.UpdateEmployeeAsync(id, employeeRequestDTO);
             if (updatedEmployee == null)
             {
-                return NotFound();
+                return NotFoundResponse("Employee", id);
             }
             return Ok(updatedEmployee);
         }
 
-        ///// <summary>
-        ///// Deletes an employee by their unique identifier.
-        ///// </summary>
-        ///// <param name="id">The unique identifier of the employee to delete.</param>
-        ///// <returns>A message indicating the result of the deletion operation.</returns>
+        /// <summary>
+        /// Deletes an employee by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the employee to delete.</param>
+        /// <returns>A message indicating the result of the deletion operation.</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteEmployee(int id)
         {
@@ -106,7 +108,7 @@ namespace Ticket_Management_System.Controllers
             var result = await _employeeService.DeleteEmployeeAsync(id);
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("Employee", id);
             }
             return Ok(result);
         }
