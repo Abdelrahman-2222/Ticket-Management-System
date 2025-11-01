@@ -4,6 +4,7 @@ using Ticket_Management_System.DTOs.TicketCategoryDTO;
 using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketDTO
 {
@@ -16,26 +17,31 @@ namespace Ticket_Management_System.DTOs.TicketDTO
         /// <summary>
         /// Gets or sets the unique identifier of the ticket.
         /// </summary>
+        [RequiredField("Id is required.")]
         public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the title of the ticket.
         /// </summary>
+        [RequiredField("Title is required.")]
         public string Title { get; set; }
 
         /// <summary>
         /// Gets or sets a detailed description of the ticket issue.
         /// </summary>
+        [RequiredField("Description is required.")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time when the ticket was resolved, if applicable.
         /// </summary>
+        [RequiredField("ResolvedAt is required.")]
         public DateTime? ResolvedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time when the ticket was submitted.
         /// </summary>
+        [RequiredField("SubmittedAt is required.")]
         public DateTimeOffset? SubmittedAt { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
