@@ -3,14 +3,16 @@ using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.EmployeeDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
     /// <summary>
     /// Provides services for managing departments, including CRUD operations.
     /// </summary>
-    public class DepartmentService : IDepartmentService
+    public class DepartmentService :  EnsureValid,IDepartmentService
     {
         private readonly TicketContext _context;
 
@@ -41,12 +43,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="ArgumentException">Thrown if the department name is null or whitespace.</exception>
         public async Task<DepartmentResponseDTO> CreateDepartmentAsync(DepartmentRequestDTO departmentRequestDTO)
         {
-            if (departmentRequestDTO == null)
-                throw new ArgumentNullException(nameof(departmentRequestDTO));
-
-            if (string.IsNullOrWhiteSpace(departmentRequestDTO.Name))
-                throw new ArgumentException("Name is required.", nameof(departmentRequestDTO.Name));
-
+            EnsureValidDTOOnly<DepartmentRequestDTO>(departmentRequestDTO);
             var newDepartment = new Department
             {
                 Name = departmentRequestDTO.Name.Trim()
@@ -69,6 +66,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The department details if found; otherwise, null.</returns>
         public async Task<DepartmentResponseDTO> GetDepartmentByIdAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var department = await _context.Departments
                 .Where(d => d.Id == id)
                 .Select(d => new DepartmentResponseDTO
@@ -82,7 +80,11 @@ namespace Ticket_Management_System.Services
                         Email = em.Email
                     }).ToList()
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
+            if(department == null)
+            {
+                return null;
+            }
 
             return department;
         }
@@ -118,12 +120,13 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the department with the specified ID is not found.</exception>
         public async Task<DepartmentResponseDTO> UpdateDepartmentAsync(int id, DepartmentRequestDTO departmentRequestDTO)
         {
+            EnsureValidDTOWithID<DepartmentRequestDTO>(departmentRequestDTO, id);
             var department = await _context.Departments
                              .Include(d => d.Employees)
-                             .FirstOrDefaultAsync(d => d.Id == id);
+                             .SingleOrDefaultAsync(d => d.Id == id);
             if (department == null)
             {
-                throw new KeyNotFoundException($"Department with ID {id} not found.");
+                return null;
             }
             department.Name = departmentRequestDTO.Name;
             _context.Departments.Update(department);
@@ -150,10 +153,11 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the department with the specified ID is not found.</exception>
         public async Task<string> DeleteDepartmentAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var departmentTobeDeleted = await _context.Departments.FindAsync(id);
             if (departmentTobeDeleted == null)
             {
-                throw new KeyNotFoundException($"Department with ID {id} not found.");
+                return null;
             }
 
             _context.Departments.Remove(departmentTobeDeleted);

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ticket_Management_System.Contracts;
+using Ticket_Management_System.DTOs.DepartmentDTO;
+using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
+using Ticket_Management_System.Models;
 
 namespace Ticket_Management_System.Controllers
 {
@@ -9,7 +12,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketPriorityController : ControllerBase
+    public class TicketPriorityController : BaseController
     {
         private readonly ITicketPriorityService _ticketPriorityService;
 
@@ -30,6 +33,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketPriorityResponseDTO>> CreateTicketPriority(TicketPriorityRequestDTO ticketPriorityRequestDTO)
         {
+            var validation = ValidateDTO(ticketPriorityRequestDTO);
+            if (validation != null) return validation;
             var createdTicketPriority = await _ticketPriorityService.CreateTicketPriorityAsync(ticketPriorityRequestDTO);
             if (createdTicketPriority == null)
             {
@@ -47,10 +52,12 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketPriorityResponseDTO>> GetTicketPriorityById(int id)
         {
+            var validationResult = ValidateId(id);
+            if (validationResult != null) return validationResult;
             var ticketPriority = await _ticketPriorityService.GetTicketPriorityByIdAsync(id);
             if (ticketPriority == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket Priority", id);
             }
 
             return Ok(ticketPriority);
@@ -95,10 +102,12 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketPriorityResponseDTO>> UpdateTicketPriority(int id, TicketPriorityRequestDTO ticketPriorityRequestDTO)
         {
+            var validationResult = ValidateDTOWithId<TicketPriorityRequestDTO>(ticketPriorityRequestDTO, id);
+            if (validationResult != null) return validationResult;
             var updatedTicketPriority = await _ticketPriorityService.UpdateTicketPriorityAsync(id, ticketPriorityRequestDTO);
             if (updatedTicketPriority == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket Priority", id);
             }
 
             return Ok(updatedTicketPriority);
@@ -112,10 +121,12 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteTicketPriority(int id)
         {
+            var validationResult = ValidateId(id);
+            if (validationResult != null) return validationResult;
             var result = await _ticketPriorityService.DeleteTicketPriorityAsync(id);
             if (result == null)
             {
-                return NotFound();
+                return NotFoundResponse("Ticket Priority", id);
             }
 
             return Ok(result);

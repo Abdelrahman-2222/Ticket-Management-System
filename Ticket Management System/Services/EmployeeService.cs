@@ -3,7 +3,9 @@ using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
 using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.EmployeeDTO;
+using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.Services
@@ -11,7 +13,7 @@ namespace Ticket_Management_System.Services
     /// <summary>
     /// Provides services for managing employees, including creation, retrieval, update, and deletion.
     /// </summary>
-    public class EmployeeService : IEmployeeService
+    public class EmployeeService : EnsureValid, IEmployeeService
     {
         private readonly TicketContext _context;
 
@@ -42,6 +44,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="ArgumentException">Thrown if required fields are missing.</exception>
         public async Task<EmployeeDeptResponeDTO> CreateEmployeeAsync(EmployeeCreateAssignDepartmentDTO employeeRequestDTO)
         {
+            EnsureValidDTOOnly<EmployeeCreateAssignDepartmentDTO>(employeeRequestDTO);
             var result = GenericValidator.Validate(employeeRequestDTO);
             if (!result.IsValid)
                 throw new ArgumentException(result.ErrorMessage);
@@ -75,6 +78,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The employee with department information, or null if not found.</returns>
         public async Task<EmployeeDeptResponeDTO> GetEmployeeByIdAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var employee = await _context.Employees
                 .Select(E => new EmployeeDeptResponeDTO
                 {
@@ -88,6 +92,10 @@ namespace Ticket_Management_System.Services
                     }
                 })
                 .SingleOrDefaultAsync(EID => EID.Id == id);
+            if (employee == null)
+            {
+                return null;
+            }
 
             return employee;
         }
@@ -123,10 +131,11 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the employee is not found.</exception>
         public async Task<EmployeeDeptResponeDTO> UpdateEmployeeAsync(int id, EmployeeUpdateRequest employeeRequestDTO)
         {
+            EnsureValidDTOWithID<EmployeeUpdateRequest>(employeeRequestDTO, id);
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
-                throw new KeyNotFoundException($"Employee with ID {id} not found.");
+                return null;
             }
             employee.Name = employeeRequestDTO.Name;
             employee.Email = employeeRequestDTO.Email;
@@ -155,10 +164,11 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the employee is not found.</exception>
         public async Task<string> DeleteEmployeeAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var employeeTobeDeleted = await _context.Employees.FindAsync(id);
             if (employeeTobeDeleted == null)
             {
-                throw new KeyNotFoundException($"Employee with ID {id} not found.");
+                return null;
             }
 
             _context.Employees.Remove(employeeTobeDeleted);
