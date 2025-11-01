@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Ticket_Management_System.DTOs.TicketCommentDTO;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketDTO
 {
@@ -12,15 +13,15 @@ namespace Ticket_Management_System.DTOs.TicketDTO
         /// Gets or sets the title of the ticket.
         /// This field is required and describes the main issue.
         /// </summary>
-        [Required]
-        public required string Title { get; init; }
+        [RequiredField("Title is required.")]
+        public string Title { get; init; }
 
         /// <summary>
         /// Gets or sets the detailed description of the ticket issue.
         /// This field is required.
         /// </summary>
-        [Required]
-        public required string Description { get; init; }
+        [RequiredField("Description is required.")]
+        public string Description { get; init; }
 
         /// <summary>
         /// Gets or sets the identifier of the employee submitting the ticket.

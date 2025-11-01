@@ -10,13 +10,15 @@ using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.DTOs.TicketStatusDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.Services
 {
     /// <summary>
     /// Provides business logic for managing tickets including creation, retrieval, updating, and deletion.
     /// </summary>
-    public class TicketService : ITicketService
+    public class TicketService : EnsureValid, ITicketService
     {
         private readonly TicketContext _context;
 
@@ -36,6 +38,7 @@ namespace Ticket_Management_System.Services
         /// <returns>A <see cref="TicketGetIdResponseDTO"/> representing the ticket details if found; otherwise, null.</returns>
         public async Task<TicketGetIdResponseDTO> GetTicketByIdAsync(int id)
         {
+            EnsureValidIDOnly<TicketGetIdResponseDTO>(id);
             var ticket = await _context.Tickets
                 .Select(T => new TicketGetIdResponseDTO
                 {
@@ -90,42 +93,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="ArgumentException">Thrown when required fields are missing or invalid.</exception>
         public async Task<TicketInsertResponseDTO> CreateTicketAsync(TicketInsertRequestDTO ticketRequestDTO)
         {
-            if (ticketRequestDTO == null)
-                throw new ArgumentNullException(nameof(ticketRequestDTO));
-
-            if (string.IsNullOrWhiteSpace(ticketRequestDTO.Title))
-                throw new ArgumentException("Title is required.", nameof(ticketRequestDTO.Title));
-
-            if (string.IsNullOrWhiteSpace(ticketRequestDTO.Description))
-                throw new ArgumentException("Description is required.", nameof(ticketRequestDTO.Description));
-
-            if (ticketRequestDTO.SupportAgentId.HasValue)
-            {
-                var agentExists = await _context.SupportAgents
-                    .AnyAsync(sa => sa.Id == ticketRequestDTO.SupportAgentId.Value);
-
-                if (!agentExists)
-                    throw new ArgumentException("Invalid SupportAgentId.", nameof(ticketRequestDTO.SupportAgentId));
-            }
-
-            var categoryExists = await _context.TicketCategories
-                .AnyAsync(c => c.Id == ticketRequestDTO.TicketCategoryId);
-            if (!categoryExists)
-                throw new ArgumentException("Invalid TicketCategoryId.", nameof(ticketRequestDTO.TicketCategoryId));
-
-            var priorityExists = await _context.TicketPriorities
-                .AnyAsync(p => p.Id == ticketRequestDTO.TicketPriorityId);
-            if (!priorityExists)
-                throw new ArgumentException("Invalid TicketPriorityId.", nameof(ticketRequestDTO.TicketPriorityId));
-
-            if (ticketRequestDTO.Comments != null)
-            {
-                foreach (var comment in ticketRequestDTO.Comments)
-                {
-                    if (string.IsNullOrWhiteSpace(comment.Content))
-                        throw new ArgumentException("Comment content cannot be empty.", nameof(comment.Content));
-                }
-            }
+            EnsureValidDTOOnly<TicketInsertRequestDTO>(ticketRequestDTO);
 
             var newTicket = new Ticket
             {
@@ -168,7 +136,7 @@ namespace Ticket_Management_System.Services
         /// </summary>
         public async Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -230,6 +198,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if ticket is not found.</exception>
         public async Task<TicketUpdateResponeDTO> UpdateTicketAsync(int id, TicketUpdateRequestDTO ticketUpdateRequestDTO)
         {
+            EnsureValidDTOWithID<TicketUpdateRequestDTO>(ticketUpdateRequestDTO, id);
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
             {
@@ -258,6 +227,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the ticket does not exist.</exception>
         public async Task<string> DeleteTicketAsync(int id)
         {
+            EnsureValidIDOnly<TicketUpdateRequestDTO>(id);
             var ticketTobeDeleted = await _context.Tickets.FindAsync(id);
             if (ticketTobeDeleted == null)
             {
