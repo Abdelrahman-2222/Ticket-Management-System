@@ -71,6 +71,8 @@ namespace Ticket_Management_System.Services
         //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
 
         //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
+
+        //public async Task<TicketHistoryResponseGetByIdDTO> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO ticketHistoryUpdateRequestDTO)
         //{
         //    var ticketHistory = await _context.TicketHistories.FindAsync(id);
         //    if (ticketHistory == null)
