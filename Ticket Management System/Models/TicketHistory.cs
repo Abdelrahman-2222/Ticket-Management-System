@@ -6,16 +6,11 @@ namespace Ticket_Management_System.Models
     /// Represents a single change log entry for a <see cref="Ticket"/>.
     /// </summary>
     /// <remarks>
-    /// Implements <see cref="IBaseId"/> and belongs to a single <see cref="Ticket"/>.
+    /// Implements <see cref="EntityBase"/> and belongs to a single <see cref="Ticket"/>.
     /// Used to maintain an audit trail of updates made to the ticket over time.
     /// </remarks>
-    public class TicketHistory : IBaseId
+    public class TicketHistory : EntityBase
     {
-        /// <summary>
-        /// Gets or sets the unique identifier for the ticket history entry.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or sets a human-readable description of what changed on the ticket.
         /// </summary>

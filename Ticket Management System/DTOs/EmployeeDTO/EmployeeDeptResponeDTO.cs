@@ -3,9 +3,9 @@
 namespace Ticket_Management_System.DTOs.EmployeeDTO
 {
     /// <summary>
-    /// Represents the response data transfer object for an employee.
+    /// Represents the response data transfer object for retrieving employee information along with department details.
     /// </summary>
-    public class EmployeeResponseDTO
+    public class EmployeeDeptResponeDTO
     {
         /// <summary>
         /// Gets or sets the unique identifier of the employee.
@@ -23,8 +23,8 @@ namespace Ticket_Management_System.DTOs.EmployeeDTO
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets the department associated with the employee.
+        /// Gets or sets the department information associated with the employee.
         /// </summary>
-        public DepartmentResponseDTO Department { get; set; }
+        public DepartmentGetResponseDTO Department { get; set; }
     }
 }
