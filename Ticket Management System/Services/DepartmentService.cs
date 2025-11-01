@@ -66,7 +66,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The department details if found; otherwise, null.</returns>
         public async Task<DepartmentResponseDTO> GetDepartmentByIdAsync(int id)
         {
-            EnsureValidIDOnly<DepartmentResponseDTO>(id);
+            EnsureValidIDOnly(id);
             var department = await _context.Departments
                 .Where(d => d.Id == id)
                 .Select(d => new DepartmentResponseDTO
@@ -80,7 +80,11 @@ namespace Ticket_Management_System.Services
                         Email = em.Email
                     }).ToList()
                 })
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
+            if(department == null)
+            {
+                return null;
+            }
 
             return department;
         }
@@ -119,10 +123,10 @@ namespace Ticket_Management_System.Services
             EnsureValidDTOWithID<DepartmentRequestDTO>(departmentRequestDTO, id);
             var department = await _context.Departments
                              .Include(d => d.Employees)
-                             .FirstOrDefaultAsync(d => d.Id == id);
+                             .SingleOrDefaultAsync(d => d.Id == id);
             if (department == null)
             {
-                throw new KeyNotFoundException($"Department with ID {id} not found.");
+                return null;
             }
             department.Name = departmentRequestDTO.Name;
             _context.Departments.Update(department);
@@ -149,11 +153,11 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the department with the specified ID is not found.</exception>
         public async Task<string> DeleteDepartmentAsync(int id)
         {
-            EnsureValidIDOnly<string>(id);
+            EnsureValidIDOnly(id);
             var departmentTobeDeleted = await _context.Departments.FindAsync(id);
             if (departmentTobeDeleted == null)
             {
-                throw new KeyNotFoundException($"Department with ID {id} not found.");
+                return null;
             }
 
             _context.Departments.Remove(departmentTobeDeleted);

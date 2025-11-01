@@ -67,7 +67,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The matching <see cref="TicketPriorityResponseDTO"/>, or null if not found.</returns>
         public async Task<TicketPriorityResponseDTO> GetTicketPriorityByIdAsync(int id)
         {
-            EnsureValidIDOnly<TicketPriorityResponseDTO>(id);
+            EnsureValidIDOnly(id);
             var ticketPriority = await _context.TicketPriorities
                 .Where(tp => tp.Id == id)
                 .Select(tp => new TicketPriorityResponseDTO
@@ -76,6 +76,11 @@ namespace Ticket_Management_System.Services
                     Name = tp.Name
                 })
                 .FirstOrDefaultAsync();
+
+            if (ticketPriority == null)
+            {
+                return null;
+            }
 
             return ticketPriority;
         }
@@ -109,7 +114,9 @@ namespace Ticket_Management_System.Services
             var ticketPriority = await _context.TicketPriorities.FindAsync(id);
 
             if (ticketPriority == null)
-                throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
+            {
+                return null;
+            }
 
             ticketPriority.Name = ticketPriorityRequestDTO.Name;
 
@@ -131,10 +138,12 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
         public async Task<string> DeleteTicketPriorityAsync(int id)
         {
-            EnsureValidIDOnly<string>(id);
+            EnsureValidIDOnly(id);
             var TicketPriorityTobeDeleted = await _context.TicketPriorities.FindAsync(id);
             if (TicketPriorityTobeDeleted == null)
-                throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
+            {
+                return null;
+            }
 
             _context.TicketPriorities.Remove(TicketPriorityTobeDeleted);
             await _context.SaveChangesAsync();

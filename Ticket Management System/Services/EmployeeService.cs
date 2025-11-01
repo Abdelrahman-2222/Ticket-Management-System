@@ -78,7 +78,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The employee with department information, or null if not found.</returns>
         public async Task<EmployeeDeptResponeDTO> GetEmployeeByIdAsync(int id)
         {
-            EnsureValidIDOnly<EmployeeDeptResponeDTO>(id);
+            EnsureValidIDOnly(id);
             var employee = await _context.Employees
                 .Select(E => new EmployeeDeptResponeDTO
                 {
@@ -92,6 +92,10 @@ namespace Ticket_Management_System.Services
                     }
                 })
                 .SingleOrDefaultAsync(EID => EID.Id == id);
+            if (employee == null)
+            {
+                return null;
+            }
 
             return employee;
         }
@@ -131,7 +135,7 @@ namespace Ticket_Management_System.Services
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
-                throw new KeyNotFoundException($"Employee with ID {id} not found.");
+                return null;
             }
             employee.Name = employeeRequestDTO.Name;
             employee.Email = employeeRequestDTO.Email;
@@ -160,11 +164,11 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the employee is not found.</exception>
         public async Task<string> DeleteEmployeeAsync(int id)
         {
-            EnsureValidIDOnly<string>(id);
+            EnsureValidIDOnly(id);
             var employeeTobeDeleted = await _context.Employees.FindAsync(id);
             if (employeeTobeDeleted == null)
             {
-                throw new KeyNotFoundException($"Employee with ID {id} not found.");
+                return null;
             }
 
             _context.Employees.Remove(employeeTobeDeleted);
