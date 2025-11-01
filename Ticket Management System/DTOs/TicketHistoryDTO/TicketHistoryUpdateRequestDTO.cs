@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketHistoryDTO
 {
@@ -10,19 +11,20 @@ namespace Ticket_Management_System.DTOs.TicketHistoryDTO
         /// <summary>
         /// Description of the change that occurred in the ticket.
         /// </summary>
-        [Required(ErrorMessage = "ChangeDescription is required.")]
-        [StringLength(500, MinimumLength = 1, ErrorMessage = "ChangeDescription must be between 1 and 500 characters.")]
+        [RequiredField("Change Description is required.")]
         public string ChangeDescription { get; set; }
 
         /// <summary>
         /// The date and time when the ticket change occurred.
         /// Default value is the current date and time.
         /// </summary>
+        [RequiredField("Timestamp is required.")]
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
         /// Name of the ticket associated with this history record.
         /// </summary>
+        [RequiredField("Ticket Name is required.")]
         public string TicketName { get; set; }
         ///// <summary>
         ///// Name of the ticket associated with this history record.

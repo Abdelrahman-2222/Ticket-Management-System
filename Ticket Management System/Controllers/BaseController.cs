@@ -37,6 +37,11 @@ public abstract class BaseController : ControllerBase
         return null;
     }
 
+    protected ActionResult NotFoundResponse(string entity, int id)
+    {
+        return NotFound(new { message = $"{entity} with ID {id} was not found." });
+    }
+
     protected ActionResult HandleServiceResult<T>(T? entity)
         where T : class
     {

@@ -38,7 +38,7 @@ namespace Ticket_Management_System.Services
         /// <returns>A <see cref="TicketGetIdResponseDTO"/> representing the ticket details if found; otherwise, null.</returns>
         public async Task<TicketGetIdResponseDTO> GetTicketByIdAsync(int id)
         {
-            EnsureValidIDOnly<TicketGetIdResponseDTO>(id);
+            EnsureValidIDOnly(id);
             var ticket = await _context.Tickets
                 .Select(T => new TicketGetIdResponseDTO
                 {
@@ -80,6 +80,8 @@ namespace Ticket_Management_System.Services
                     }
                 })
                 .SingleOrDefaultAsync(i => i.Id == id);
+            if(ticket == null)
+                return null;
 
             return ticket;
         }
@@ -201,9 +203,7 @@ namespace Ticket_Management_System.Services
             EnsureValidDTOWithID<TicketUpdateRequestDTO>(ticketUpdateRequestDTO, id);
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
-            {
-                throw new KeyNotFoundException($"Ticket with ID {id} not found.");
-            }
+                return null;
 
             ticket.Name = ticketUpdateRequestDTO.Title;
             ticket.Description = ticketUpdateRequestDTO.Description;
@@ -227,12 +227,9 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the ticket does not exist.</exception>
         public async Task<string> DeleteTicketAsync(int id)
         {
-            EnsureValidIDOnly<TicketUpdateRequestDTO>(id);
+            EnsureValidIDOnly(id);
             var ticketTobeDeleted = await _context.Tickets.FindAsync(id);
-            if (ticketTobeDeleted == null)
-            {
-                throw new KeyNotFoundException($"Ticket with ID {id} not found.");
-            }
+            if (ticketTobeDeleted == null) return null;
 
             _context.Tickets.Remove(ticketTobeDeleted);
             await _context.SaveChangesAsync();

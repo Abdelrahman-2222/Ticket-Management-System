@@ -1,5 +1,6 @@
 ﻿using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.TicketStatusDTO
 {
@@ -11,11 +12,13 @@ namespace Ticket_Management_System.DTOs.TicketStatusDTO
         /// <summary>
         /// Gets or sets the unique identifier of the ticket status.
         /// </summary>
+        [RequiredField("Ticket Status Id is required.")]
         public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the ticket status.
         /// </summary>
+        [RequiredField("Ticket Status Name is required.")]
         public string TicketStatusName { get; set; }
 
         /// <summary>

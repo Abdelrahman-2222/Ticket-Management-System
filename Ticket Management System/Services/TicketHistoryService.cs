@@ -7,13 +7,14 @@ using Ticket_Management_System.DTOs.EmployeeDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.DTOs.TicketHistoryDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
     /// <summary>
     /// Provides business logic for managing Tickets History including creation, retrieval, updating, and deletion.
     /// </summary>
-    public class TicketHistoryService : ITicketHistoryService
+    public class TicketHistoryService : EnsureValid, ITicketHistoryService
     {
         private readonly TicketContext _context;
         /// <summary>
@@ -32,13 +33,14 @@ namespace Ticket_Management_System.Services
         /// <returns>Returns ticket history details if found</returns>
         public async Task<TicketHistoryResponseGetByIdDTO> GetTicketHistoryByIdAsync(int id)
         {
-            var ticket = await _context.TicketHistories.Select(TH => new TicketHistoryResponseGetByIdDTO
+            EnsureValidIDOnly(id);
+            var ticket = await _context.TicketHistories.Where(i => i.Id == id).Select(TH => new TicketHistoryResponseGetByIdDTO
             {
-                Id = id,
+                Id = TH.Id,
                 ChangeDescription = TH.ChangeDescription,
                 Timestamp = TH.Timestamp,
                 TicketName = TH.Ticket.Name
-            }).SingleOrDefaultAsync(i => i.Id == id);
+            }).SingleOrDefaultAsync();
             if (ticket == null)
                 return null;
             return ticket;
@@ -120,12 +122,7 @@ namespace Ticket_Management_System.Services
 
         public async Task<TicketHistoryResponseGetByIdDTO?> UpdateTicketHistoryAsync(int id, TicketHistoryUpdateRequestDTO dto)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
-            if (string.IsNullOrWhiteSpace(dto.ChangeDescription))
-                throw new ArgumentException("ChangeDescription is required.", nameof(dto.ChangeDescription));
-
+            EnsureValidDTOWithID<TicketHistoryUpdateRequestDTO>(dto, id);
             var affected = await _context.TicketHistories
                 .Where(e => e.Id == id)
                 .ExecuteUpdateAsync(s => s
@@ -135,7 +132,7 @@ namespace Ticket_Management_System.Services
 
             if (affected == 0)
             {
-                return null; 
+                return null;
             }
 
             var updatedTicketHistory = await _context.TicketHistories
@@ -160,9 +157,10 @@ namespace Ticket_Management_System.Services
         /// <returns>String response message</returns>
         public async Task<string> DeleteTicketHistoryAsync(int id)
         {
+            EnsureValidIDOnly(id);
             var ticketHistory = await _context.TicketHistories.FindAsync(id);
             if (ticketHistory == null)
-                return "Ticket history not found";
+                return null;
 
             _context.TicketHistories.Remove(ticketHistory);
             await _context.SaveChangesAsync();
@@ -176,6 +174,7 @@ namespace Ticket_Management_System.Services
         /// <returns>Returns created ticket history details</returns>
         public async Task<TicketHistoryResponseGetByIdDTO> CreateTicketHistoryAsync(TicketHistoryInsertRequestDTO ticketHistoryInsertRequestDTO)
         {
+            EnsureValidDTOOnly<TicketHistoryInsertRequestDTO>(ticketHistoryInsertRequestDTO);
             var newTicketHistory = new TicketHistory
             {
                 ChangeDescription = ticketHistoryInsertRequestDTO.ChangeDescription,

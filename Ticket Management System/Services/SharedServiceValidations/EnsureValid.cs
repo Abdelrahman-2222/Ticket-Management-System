@@ -18,7 +18,7 @@ namespace Ticket_Management_System.Services.SharedServiceValidations
                 throw new ArgumentException(result.ErrorMessage);
         }
 
-        public void EnsureValidIDOnly<T>(int id)
+        public void EnsureValidIDOnly(int id)
         {
             var result = GenericValidator.ValidateWithIdOnly(id);
             if (!result.IsValid)
