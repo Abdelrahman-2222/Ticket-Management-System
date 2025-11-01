@@ -139,6 +139,14 @@ namespace Ticket_Management_System.Services
             {
                 Id = ticketCategory.Id,
                 Name = ticketCategory.Name,
+                Tickets = ticketCategory.Tickets.Select(t => new TicketInsertResponseDTO
+                {
+                    Id = t.Id,
+                    Title = t.Name,
+                    Description = t.Description,
+                    SubmittedAt = DateTime.Now,
+                    SupportAgentName = t.SupportAgent.Name,
+                }).ToList()
             };
 
             return ticketCategoryDTO;

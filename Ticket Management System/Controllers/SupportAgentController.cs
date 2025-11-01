@@ -78,6 +78,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> CreateSupportAgent(SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var createdSupportAgent = await _supportAgentService.CreateSupportAgentAsync(supportAgentRequestDTO);
 
             return CreatedAtAction(nameof(GetSupportAgentById), new { id = createdSupportAgent.Id }, createdSupportAgent);
@@ -96,6 +99,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<SupportAgentGetAllResponseDTO>> UpdateSupportAgent(int id, SupportAgentRequestDTO supportAgentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var updatedSupportAgent = await _supportAgentService.UpdateSupportAgentAsync(id, supportAgentRequestDTO);
 
             if (updatedSupportAgent == null)

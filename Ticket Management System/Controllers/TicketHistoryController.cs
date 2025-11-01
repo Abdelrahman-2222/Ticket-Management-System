@@ -88,9 +88,6 @@ namespace Ticket_Management_System.Controllers
 
             return Ok(updatedTicketHistory);
         }
-
-
-
         /// <summary>
         /// Deletes a ticket history record by id.
         /// </summary>
