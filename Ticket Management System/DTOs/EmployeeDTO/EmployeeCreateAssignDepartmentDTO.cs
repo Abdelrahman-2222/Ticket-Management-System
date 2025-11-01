@@ -4,25 +4,23 @@ using Ticket_Management_System.DTOs.DepartmentDTO;
 namespace Ticket_Management_System.DTOs.EmployeeDTO
 {
     /// <summary>
-    /// Represents the request data transfer object for creating or updating an employee.
+    /// Data Transfer Object for creating an employee and assigning a department.
     /// </summary>
-    public class EmployeeRequestDTO
+    public class EmployeeCreateAssignDepartmentDTO
     {
         /// <summary>
         /// Gets or sets the name of the employee.
         /// </summary>
-        [Required]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the email address of the employee.
         /// </summary>
-        [Required]
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets the department associated with the employee.
+        /// Gets or sets the department assigned to the employee.
         /// </summary>
-        public DepartmentResponseDTO Department { get; set; }
+        public DepartmentIDEmployeeResponseDTO Department { get; set; }
     }
 }

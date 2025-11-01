@@ -16,25 +16,11 @@ namespace Ticket_Management_System.Models
     /// Represents a category used to classify support tickets (e.g., Hardware, Software, Network).
     /// </summary>
     /// <remarks>
-    /// Implements <see cref="IBaseId"/> and <see cref="IBaseName"/> to provide common identity and naming.
+    /// Implements <see cref="EntityBase"/> and <see cref="NamedEntityBase"/> to provide common identity and naming.
     /// Used by <see cref="Ticket"/> to group and filter issues by type.
     /// </remarks>
-    public class TicketCategory : IBaseId, IBaseName
+    public class TicketCategory : NamedEntityBase
     {
-        /// <summary>
-        /// Gets or sets the unique identifier for the ticket category.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the category name.
-        /// </summary>
-        /// <remarks>
-        /// The length is constrained by <see cref="AnnotationSettings.NameMinLength"/> and <see cref="AnnotationSettings.NameMaxLength"/>.
-        /// </remarks>
-        [MinLength(AnnotationSettings.NameMinLength), MaxLength(AnnotationSettings.NameMaxLength)]
-        public string Name { get; set; }
-
         /// <summary>
         /// Gets or sets the collection of tickets assigned to this category.
         /// </summary>

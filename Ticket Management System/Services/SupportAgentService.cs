@@ -86,7 +86,6 @@ namespace Ticket_Management_System.Services
         }
 
 
-
         /// <summary>
         /// Creates a new support agent in the system.
         /// </summary>
@@ -102,6 +101,7 @@ namespace Ticket_Management_System.Services
                 Specialization = supportAgentRequestDTO.Specialization
             };
 
+            _context.SupportAgents.Add(supportAgent);
             await _context.SupportAgents.AddAsync(supportAgent);
             await SaveChangesAsync();
 
@@ -148,7 +148,6 @@ namespace Ticket_Management_System.Services
         }
 
 
-
         /// <summary>
         /// Deletes a support agent from the system by their unique identifier.
         /// </summary>
@@ -175,6 +174,7 @@ namespace Ticket_Management_System.Services
         /// <summary>
         /// Persists all pending changes made in the current database context.
         /// </summary>
+        /// <returns>A task representing the asynchronous save operation.</returns>
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
