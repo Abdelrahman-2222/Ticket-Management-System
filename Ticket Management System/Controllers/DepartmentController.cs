@@ -11,7 +11,7 @@ namespace Ticket_Management_System.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentController : ControllerBase
+    public class DepartmentController : BaseController
     {
         private readonly IDepartmentService _departmentService;
 
@@ -32,6 +32,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<DepartmentResponseDTO>> CreateDepartment(DepartmentRequestDTO departmentRequestDTO)
         {
+            var validation = ValidateDTO(departmentRequestDTO);
+            if (validation != null) return validation;
             var createdDepartment = await _departmentService.CreateDepartmentAsync(departmentRequestDTO);
             if (createdDepartment == null)
             {
@@ -48,6 +50,8 @@ namespace Ticket_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DepartmentResponseDTO>> GetDepartmentById(int id)
         {
+            var validation = ValidateDTO(id);
+            if (validation != null) return validation;
             var department = await _departmentService.GetDepartmentByIdAsync(id);
             if (department == null)
             {
@@ -80,6 +84,8 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<DepartmentResponseDTO>> UpdateDepartment(int id, DepartmentRequestDTO departmentRequestDTO)
         {
+            var validation = ValidateDTO(departmentRequestDTO);
+            if (validation != null) return validation;
             var updatedDepartment = await _departmentService.UpdateDepartmentAsync(id, departmentRequestDTO);
             if (updatedDepartment == null)
             {
@@ -96,6 +102,8 @@ namespace Ticket_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteDepartment(int id)
         {
+            var validation = ValidateDTO(id);
+            if (validation != null) return validation;
             var result = await _departmentService.DeleteDepartmentAsync(id);
             if (result == null)
             {

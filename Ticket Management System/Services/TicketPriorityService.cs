@@ -1,16 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ticket_Management_System.Contracts;
 using Ticket_Management_System.Data;
+using Ticket_Management_System.DTOs.DepartmentDTO;
 using Ticket_Management_System.DTOs.TicketDTO;
 using Ticket_Management_System.DTOs.TicketPriorityDTO;
 using Ticket_Management_System.Models;
+using Ticket_Management_System.Services.SharedServiceValidations;
 
 namespace Ticket_Management_System.Services
 {
     /// <summary>
     /// Provides services for managing ticket priorities including creation, retrieval, updating, and deletion operations.
     /// </summary>
-    public class TicketPriorityService : ITicketPriorityService
+    public class TicketPriorityService : EnsureValid, ITicketPriorityService
     {
         private readonly TicketContext _context;
 
@@ -41,11 +43,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="ArgumentException">Thrown when the name field is invalid.</exception>
         public async Task<TicketPriorityResponseDTO> CreateTicketPriorityAsync(TicketPriorityRequestDTO ticketPriorityRequestDTO)
         {
-            if (ticketPriorityRequestDTO == null)
-                throw new ArgumentNullException(nameof(ticketPriorityRequestDTO));
-
-            if (string.IsNullOrWhiteSpace(ticketPriorityRequestDTO.Name))
-                throw new ArgumentException("Name is required.", nameof(ticketPriorityRequestDTO.Name));
+            EnsureValidDTOOnly<TicketPriorityRequestDTO>(ticketPriorityRequestDTO);
 
             var newTicketPriority = new TicketPriority
             {
@@ -69,6 +67,7 @@ namespace Ticket_Management_System.Services
         /// <returns>The matching <see cref="TicketPriorityResponseDTO"/>, or null if not found.</returns>
         public async Task<TicketPriorityResponseDTO> GetTicketPriorityByIdAsync(int id)
         {
+            EnsureValidIDOnly<TicketPriorityResponseDTO>(id);
             var ticketPriority = await _context.TicketPriorities
                 .Where(tp => tp.Id == id)
                 .Select(tp => new TicketPriorityResponseDTO
@@ -106,6 +105,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
         public async Task<TicketPriorityResponseDTO> UpdateTicketPriorityAsync(int id, TicketPriorityRequestDTO ticketPriorityRequestDTO)
         {
+            EnsureValidDTOWithID<TicketPriorityRequestDTO>(ticketPriorityRequestDTO, id);
             var ticketPriority = await _context.TicketPriorities.FindAsync(id);
 
             if (ticketPriority == null)
@@ -131,6 +131,7 @@ namespace Ticket_Management_System.Services
         /// <exception cref="KeyNotFoundException">Thrown if the ticket priority is not found.</exception>
         public async Task<string> DeleteTicketPriorityAsync(int id)
         {
+            EnsureValidIDOnly<string>(id);
             var TicketPriorityTobeDeleted = await _context.TicketPriorities.FindAsync(id);
             if (TicketPriorityTobeDeleted == null)
                 throw new KeyNotFoundException($"Ticket Priority with ID {id} not found.");
