@@ -3,7 +3,7 @@ using Ticket_Management_System.DTOs.SupportAgentDTO;
 
 namespace Ticket_Management_System.Validations.SupportAgentDTOValidations
 {
-    public class SupportAgentValidator : AbstractValidator<SupportAgentRequestDTO>
+    public class SupportAgentValidator : AbstractValidator<SupportAgentGetAllResponseDTO>
     {
         public SupportAgentValidator()
         {
@@ -14,6 +14,9 @@ namespace Ticket_Management_System.Validations.SupportAgentDTOValidations
             RuleFor(agent => agent.Specialization)
                 .NotEmpty().WithMessage("Specialization is required.")
                 .MaximumLength(50).WithMessage("Specialization cannot exceed 50 characters.");
+
+            //RuleFor(agent => agent.Id)
+            //    .Equal(0).WithMessage("Support agent ID must be a positive integer.");
         }
     }
 }
