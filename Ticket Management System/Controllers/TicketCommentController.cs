@@ -81,6 +81,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<TicketCommentResponseDTO>> CreateTicketComment(TicketCommentRequestDTO ticketCommentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var createdTicketComment = await _ticketCommentService.CreateTicketCommentAsync(ticketCommentRequestDTO);
 
             if (createdTicketComment == null)
@@ -104,6 +107,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<TicketCommentResponseDTO>> UpdateTicketComment(int id, TicketCommentRequestDTO ticketCommentRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var updatedTicketComment = await _ticketCommentService.UpdateTicketCommentAsync(id, ticketCommentRequestDTO);
 
             if (updatedTicketComment == null)

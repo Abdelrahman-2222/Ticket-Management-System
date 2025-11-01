@@ -81,6 +81,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateTicketCategory([FromBody] TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var createdTicketCategory = await _ticketCategoryService.CreateTicketCategoryAsync(ticketCategoryRequestDTO);
 
             if(createdTicketCategory == null)
@@ -104,6 +107,9 @@ namespace Ticket_Management_System.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateTicketCategory(int id, [FromBody] TicketCategoryRequestDTO ticketCategoryRequestDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var updatedTicketCategory = await _ticketCategoryService.UpdateTicketCategoryAsync(id, ticketCategoryRequestDTO);
 
             if (updatedTicketCategory == null)
