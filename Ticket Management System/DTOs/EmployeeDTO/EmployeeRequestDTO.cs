@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Ticket_Management_System.DTOs.DepartmentDTO;
+using Ticket_Management_System.ValidationAbstraction;
 
 namespace Ticket_Management_System.DTOs.EmployeeDTO
 {
@@ -11,13 +12,14 @@ namespace Ticket_Management_System.DTOs.EmployeeDTO
         /// <summary>
         /// Gets or sets the name of the employee.
         /// </summary>
-        [Required]
+        [RequiredField("Employee name is required.")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the email address of the employee.
         /// </summary>
-        [Required]
+        [RequiredField("Employee email is required.")]
+
         public string Email { get; set; }
 
         /// <summary>

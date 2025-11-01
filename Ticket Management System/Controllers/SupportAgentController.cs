@@ -37,6 +37,10 @@ namespace Ticket_Management_System.Controllers
         public async Task<ActionResult<List<SupportAgentResponseDTO>>> GetAllSupportAgents()
         {
             var supportAgents = await _supportAgentService.GetAllSupportAgentsAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            //if (supportAgents.)
+            //    return BadRequest(ModelState);
 
             if (supportAgents == null)
             {
